@@ -1,13 +1,5 @@
 from constants import *
 
-empty_board = [[W_EMPTY,B_EMPTY,W_EMPTY,B_EMPTY,W_EMPTY,B_EMPTY,W_EMPTY,B_EMPTY],
-               [B_EMPTY,W_EMPTY,B_EMPTY,W_EMPTY,B_EMPTY,W_EMPTY,B_EMPTY,W_EMPTY],
-               [W_EMPTY,B_EMPTY,W_EMPTY,B_EMPTY,W_EMPTY,B_EMPTY,W_EMPTY,B_EMPTY],
-               [B_EMPTY,W_EMPTY,B_EMPTY,W_EMPTY,B_EMPTY,W_EMPTY,B_EMPTY,W_EMPTY],
-               [W_EMPTY,B_EMPTY,W_EMPTY,B_EMPTY,W_EMPTY,B_EMPTY,W_EMPTY,B_EMPTY],
-               [B_EMPTY,W_EMPTY,B_EMPTY,W_EMPTY,B_EMPTY,W_EMPTY,B_EMPTY,W_EMPTY],
-               [W_EMPTY,B_EMPTY,W_EMPTY,B_EMPTY,W_EMPTY,B_EMPTY,W_EMPTY,B_EMPTY],
-               [B_EMPTY,W_EMPTY,B_EMPTY,W_EMPTY,B_EMPTY,W_EMPTY,B_EMPTY,W_EMPTY]]
 board_state = [[B_ROOK,B_KNIGHT,B_BISHOP,B_QUEEN,B_KING,B_BISHOP,B_KNIGHT,B_ROOK],
                [B_PAWN,B_PAWN,B_PAWN,B_PAWN,B_PAWN,B_PAWN,B_PAWN,B_PAWN],
                [W_EMPTY,B_EMPTY,W_EMPTY,B_EMPTY,W_EMPTY,B_EMPTY,W_EMPTY,B_EMPTY],
@@ -42,7 +34,7 @@ class Pawn():
                             return False
                         elif y_diff == -1:
                             board_state[numbers.index(self.number)][letters.index(self.letter)] = self.color.format(PAWN)
-                            board_state[numbers.index(self.number)+1][letters.index(self.letter)] = empty_board[numbers.index(self.number)+1][letters.index(self.letter)]
+                            board_state[numbers.index(self.number)+1][letters.index(self.letter)] = EMPTY_BOARD[numbers.index(self.number)+1][letters.index(self.letter)]
                             self.turn_count += 1
                             return True
                             #break_out_flag = True
@@ -53,7 +45,7 @@ class Pawn():
                                     is_valid = False
                             if is_valid == True:
                                 board_state[numbers.index(self.number)][letters.index(self.letter)] = self.color.format(PAWN)
-                                board_state[numbers.index(self.number)+2][letters.index(self.letter)] = empty_board[numbers.index(self.number)+2][letters.index(self.letter)]
+                                board_state[numbers.index(self.number)+2][letters.index(self.letter)] = EMPTY_BOARD[numbers.index(self.number)+2][letters.index(self.letter)]
                                 if self.color == white_text:
                                     self.turn_count += 1
                                 return True
@@ -66,7 +58,7 @@ class Pawn():
                             return False
                         elif y_diff == 1:
                             board_state[numbers.index(self.number)][letters.index(self.letter)] = self.color.format(PAWN)
-                            board_state[numbers.index(self.number)-1][letters.index(self.letter)] = empty_board[numbers.index(self.number)-1][letters.index(self.letter)]
+                            board_state[numbers.index(self.number)-1][letters.index(self.letter)] = EMPTY_BOARD[numbers.index(self.number)-1][letters.index(self.letter)]
                             return True
                             #break_out_flag = True
                             #break
@@ -77,7 +69,7 @@ class Pawn():
                                     is_valid = False
                             if is_valid == True:
                                 board_state[numbers.index(self.number)][letters.index(self.letter)] = self.color.format(PAWN)
-                                board_state[numbers.index(self.number)-2][letters.index(self.letter)] = empty_board[numbers.index(self.number)-2][letters.index(self.letter)]
+                                board_state[numbers.index(self.number)-2][letters.index(self.letter)] = EMPTY_BOARD[numbers.index(self.number)-2][letters.index(self.letter)]
                                 if self.color == white_text:
                                     self.turn_count += 1
                                 return True
@@ -109,7 +101,7 @@ class Knight():
                             input('\nIf you are trying to capture, ensure you are properly using "x" in your chess notation! Click "Enter" to continue...')
                             print('')
                         else:
-                            board_state[i][j] = empty_board[i][j]
+                            board_state[i][j] = EMPTY_BOARD[i][j]
                             board_state[numbers.index(self.number)][letters.index(self.letter)] = self.color.format(KNIGHT)
                             if self.color == white_text:
                                 self.turn_count += 1
@@ -159,7 +151,7 @@ class Rook():
                         elif (board_state[numbers.index(self.number)][letters.index(self.letter)] in list(BLACK_PIECES.values())) and self.color == black_text:
                             return False
                         elif is_valid and (board_state[numbers.index(self.number)][letters.index(self.letter)] in EMPTY_SPACES):
-                            board_state[i][j] = empty_board[i][j]
+                            board_state[i][j] = EMPTY_BOARD[i][j]
                             board_state[numbers.index(self.number)][letters.index(self.letter)] = self.color.format(ROOK)
                             if self.color == white_text:
                                 self.turn_count += 1
@@ -208,7 +200,7 @@ class Bishop():
                         elif (board_state[numbers.index(self.number)][letters.index(self.letter)] in list(BLACK_PIECES.values())) and self.color == black_text:
                             return False
                         elif is_valid and (board_state[numbers.index(self.number)][letters.index(self.letter)] in EMPTY_SPACES):
-                            board_state[i][j] = empty_board[i][j]
+                            board_state[i][j] = EMPTY_BOARD[i][j]
                             board_state[numbers.index(self.number)][letters.index(self.letter)] = self.color.format(BISHOP)
                             if self.color == white_text:
                                 self.turn_count += 1
@@ -274,7 +266,7 @@ class Queen():
                         elif (board_state[numbers.index(self.number)][letters.index(self.letter)] in list(BLACK_PIECES.values())) and self.color == black_text:
                             return False
                         elif is_valid and (board_state[numbers.index(self.number)][letters.index(self.letter)] in EMPTY_SPACES):
-                            board_state[i][j] = empty_board[i][j]
+                            board_state[i][j] = EMPTY_BOARD[i][j]
                             board_state[numbers.index(self.number)][letters.index(self.letter)] = self.color.format(QUEEN)
                             if self.color == white_text:
                                 self.turn_count += 1
@@ -309,7 +301,7 @@ class King():
                         elif (board_state[numbers.index(self.number)][letters.index(self.letter)] in list(BLACK_PIECES.values())) and self.color == black_text:
                             return False
                         elif board_state[numbers.index(self.number)][letters.index(self.letter)] in EMPTY_SPACES:
-                            board_state[i][j] = empty_board[i][j]
+                            board_state[i][j] = EMPTY_BOARD[i][j]
                             board_state[numbers.index(self.number)][letters.index(self.letter)] = self.color.format(KING)
                             if self.color == white_text:
                                 self.turn_count += 1

@@ -82,39 +82,40 @@ while active_game:
             moving_pawn.move()
             turn_count = moving_pawn.turn_count
     
-    is_move_possible = False
-    while not is_move_possible:
-        random_y = rc(range(len(board_state)))
-        random_x = rc(range(len(board_state)))
-        random_piece = board_state[random_y][random_x]
-        while not random_piece in list(BLACK_PIECES.values()):
+    if not h:
+        is_move_possible = False
+        while not is_move_possible:
             random_y = rc(range(len(board_state)))
             random_x = rc(range(len(board_state)))
             random_piece = board_state[random_y][random_x]
-        random_letter = rc(letters)
-        random_number = rc(numbers)
-        if random_piece == black_text.format(KNIGHT):
-            moving_knight = Knight(random_letter, random_number, turn_count, black_text)
-            if moving_knight.move():
-                is_move_possible = True
-        elif random_piece == black_text.format(ROOK):
-            moving_rook = Rook(random_letter, random_number, turn_count, black_text)
-            if moving_rook.move():
-                is_move_possible = True
-        elif random_piece == black_text.format(BISHOP):
-            moving_bishop = Bishop(random_letter, random_number, turn_count, black_text)
-            if moving_bishop.move():
-                is_move_possible = True
-        elif random_piece == black_text.format(KING):
-            moving_king = King(random_letter, random_number, turn_count, black_text)
-            if moving_king.move():
-                is_move_possible = True
-        elif random_piece == black_text.format(QUEEN):
-            moving_queen = Queen(random_letter, random_number, turn_count, black_text)
-            if moving_queen.move():
-                is_move_possible = True
-        elif random_piece == black_text.format(PAWN):
-            moving_pawn = Pawn(random_letter, random_number, turn_count, black_text)
-            if moving_pawn.move():
-                is_move_possible = True
-        print(f'{random_piece} at ({random_x}, {random_y}) going to ({random_letter}, {random_number}).')
+            while not random_piece in list(BLACK_PIECES.values()):
+                random_y = rc(range(len(board_state)))
+                random_x = rc(range(len(board_state)))
+                random_piece = board_state[random_y][random_x]
+            random_letter = rc(letters)
+            random_number = rc(numbers)
+            if random_piece == black_text.format(KNIGHT):
+                moving_knight = Knight(random_letter, random_number, turn_count, black_text)
+                if moving_knight.move():
+                    is_move_possible = True
+            elif random_piece == black_text.format(ROOK):
+                moving_rook = Rook(random_letter, random_number, turn_count, black_text)
+                if moving_rook.move():
+                    is_move_possible = True
+            elif random_piece == black_text.format(BISHOP):
+                moving_bishop = Bishop(random_letter, random_number, turn_count, black_text)
+                if moving_bishop.move():
+                    is_move_possible = True
+            elif random_piece == black_text.format(KING):
+                moving_king = King(random_letter, random_number, turn_count, black_text)
+                if moving_king.move():
+                    is_move_possible = True
+            elif random_piece == black_text.format(QUEEN):
+                moving_queen = Queen(random_letter, random_number, turn_count, black_text)
+                if moving_queen.move():
+                    is_move_possible = True
+            elif random_piece == black_text.format(PAWN):
+                moving_pawn = Pawn(random_letter, random_number, turn_count, black_text)
+                if moving_pawn.move():
+                    is_move_possible = True
+            print(f'{random_piece} at ({random_x}, {random_y}) going to ({random_letter}, {random_number}).')
