@@ -1,9 +1,13 @@
-from sqlalchemy import Integer, create_engine, Column, Text, ForeignKey, Table
+from sqlalchemy import Integer, create_engine, Column, Text, ForeignKey, Table, MetaData
 from sqlalchemy.orm import sessionmaker, relationship
 from sqlalchemy.ext.declarative import declarative_base
 from constants import board_state
 
-Base = declarative_base()
+convention = {
+    "fk": "fk_%(table_name)s_%(column_0_name)s_%(referred_table_name)s",
+}
+metadata = MetaData(naming_convention=convention)
+Base = declarative_base(metadata=metadata)
 
 engine = create_engine('sqlite:///chessdatabase.db')
 Session = sessionmaker(bind=Base)
@@ -13,7 +17,7 @@ game_user = Table(
     'game_users',
     Base.metadata,
     Column('user_id', ForeignKey('users.id'), primary_key=True),
-    Column('game_id', ForeignKey('users.id'), primary_key=True),
+    Column('game_id', ForeignKey('games.id'), primary_key=True),
     extend_existing=True
 )
 

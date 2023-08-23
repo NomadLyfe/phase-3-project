@@ -5,7 +5,7 @@ from chess_classes import PawnAction,KnightAction,RookAction,BishopAction,QueenA
 from models import Game, User
 
 h = False
-new_game = Game()
+new_game = Game(turn_count = 1)
 board_state = new_game.board_state
 turn_count = new_game.turn_count
 active_game = new_game.active_game
