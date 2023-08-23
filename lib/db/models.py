@@ -10,6 +10,14 @@ engine = create_engine('sqlite:///sqlite:///chessdatabase.db')
 Session = sessionmaker(bind=Base)
 session = Session()
 
+class User(Base):
+    __tablename__ = 'users'
+
+    id = Column()
+    username = Column(Text())
+
+    games = relationship('Game', secondary=game_user, back_populates='users')
+
 class Game(Base):
     __tablename__ = 'games'
 
