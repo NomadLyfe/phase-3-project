@@ -59,9 +59,30 @@ while active_game:
         print('')
     elif 'x' in move:
         if move[0] in string.ascii_uppercase:
-            pass
+            if WHITE_PIECES[move[0]] == white_text.format(KNIGHT):
+                knight_is_capture = KnightAction(move[1], move[2], turn_count, white_text)
+                knight_is_capture.capture(board_state)
+                turn_count = knight_is_capture.turn_count
+            elif WHITE_PIECES[move[0]] == white_text.format(ROOK):
+                rook_is_capture = RookAction(move[1], move[2], turn_count, white_text)
+                rook_is_capture.capture(board_state)
+                turn_count = rook_is_capture.turn_count
+            elif WHITE_PIECES[move[0]] == white_text.format(BISHOP):
+                bishop_is_capture = BishopAction(move[1], move[2], turn_count, white_text)
+                bishop_is_capture.capture(board_state)
+                turn_count = bishop_is_capture.turn_count
+            elif WHITE_PIECES[move[0]] == white_text.format(KING):
+                king_is_capture = KingAction(move[1], move[2], turn_count, white_text)
+                king_is_capture.capture(board_state)
+                turn_count = king_is_capture.turn_count
+            elif WHITE_PIECES[move[0]] == white_text.format(QUEEN):
+                queen_is_capture = QueenAction(move[1], move[2], turn_count, white_text)
+                queen_is_capture.capture(board_state)
+                turn_count = queen_is_capture.turn_count
         else:
-            pass
+            pawn_is_capture = PawnAction(move[0], move[1], turn_count, white_text)
+            pawn_is_capture.capture(board_state)
+            turn_count = pawn_is_capture.turn_count
     elif 'O' in move:
         pass
     elif '+' in move:
