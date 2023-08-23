@@ -1,6 +1,6 @@
 from constants import PAWN,KNIGHT,ROOK,BISHOP,QUEEN,KING,black_text,white_text,WHITE_PIECES,BLACK_PIECES,EMPTY_BOARD,LETTERS,NUMBERS,EMPTY_SPACES
 
-class Pawn():
+class PawnAction():
     def __init__(self, letter, number, turn_count, color):
         self.letter = letter
         self.number = number
@@ -63,10 +63,10 @@ class Pawn():
                                 return True
                                 #break_out_flag = True
                                 #break
-    def capture():
+    def capture(self, board_state):
         pass
 
-class Knight():
+class KnightAction():
     def __init__(self, letter, number, turn_count, color):
         self.letter = letter
         self.number = number
@@ -99,10 +99,10 @@ class Knight():
                             #break
             if break_out_flag:
                 break
-    def capture():
+    def capture(self, board_state):
         pass
 
-class Rook():
+class RookAction():
     def __init__(self, letter, number, turn_count, color):
         self.letter = letter
         self.number = number
@@ -151,10 +151,10 @@ class Rook():
                             print('')
             if break_out_flag:
                 break
-    def capture():
+    def capture(self, board_state):
         pass
 
-class Bishop():
+class BishopAction():
     def __init__(self, letter, number, turn_count, color):
         self.letter = letter
         self.number = number
@@ -200,10 +200,10 @@ class Bishop():
                             print('')
             if break_out_flag:
                 break
-    def capture():
+    def capture(self, board_state):
         pass
 
-class Queen():
+class QueenAction():
     def __init__(self, letter, number, turn_count, color):
         self.letter = letter
         self.number = number
@@ -266,10 +266,10 @@ class Queen():
                             print('')
             if break_out_flag:
                 break
-    def capture():
+    def capture(self, board_state):
         pass
 
-class King():
+class KingAction():
     def __init__(self, letter, number, turn_count, color):
         self.letter = letter
         self.number = number
@@ -301,5 +301,5 @@ class King():
                             print('')
             if break_out_flag:
                 break
-    def capture():
+    def capture(self, board_state):
         pass
