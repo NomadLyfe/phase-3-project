@@ -7,7 +7,7 @@ fake = Faker()
 
 def insert_data():
     games = [Game(turn_count=rc(range(7,20))) for i in range(25)]
-    users = [User(username=fake.name(), password=fake.word()) for i in range(90)]
+    users = [User(username=fake.unique.first_name(), password=fake.word()) for i in range(90)]
     game_users = [GameUser() for i in range(150)]
     session.add_all(games + users + game_users)
     session.commit()
