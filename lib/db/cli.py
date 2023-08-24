@@ -4,30 +4,32 @@ from constants import B_ROOK,B_KNIGHT,B_BISHOP,B_QUEEN,B_KING,B_BISHOP,B_KNIGHT,
 from chess_classes import PawnAction,KnightAction,RookAction,BishopAction,QueenAction,KingAction
 from models import Game, User, session
 
-valif_login = True
+valid_login = False
 user = None
-while not valif_login:
-    input_username = input("Welcome to Jeremy's CLI Chess Minigame! Play the computer and see how well you can do!\n" \
+while not valid_login:
+    valid_login = True
+    input_username = input("\n\nWelcome to Jeremy's CLI Chess Minigame! Play the computer and see how well you can do!\n\n\n" \
                     "If you are new, please enter a unique username (if you are a returning player, type in your username):  ")
     username_output = session.query(User.username).filter(User.username == input_username).first()
     if username_output == None:
-        input_password = input("Please enter a password for your account:  ")
+        input_password = input("\n\nPlease enter a password for your account:  ")
         user = User(username = input_username, password = input_password)
     else:
-        input_password = input("Please enter your password:  ")
+        input_password = input("\n\nPlease enter your password:  ")
         password_output = session.query(User.password).filter(User.username == username_output[0]).first()
         if input_password == password_output[0]:
             user = session.query(User).filter(User.username == username_output[0]).first()
         else:
-            input('That is the wrong password! Click "enter" to be returned to the first page...')
+            input('\n\nThat is the wrong password! Click "enter" to be returned to the first page...')
             print(' ')
             valid_login = False
-valid_selection = True
+valid_selection = False
 while not valid_selection:
-    print("\n       Welcome to the CLI Chess Minigame Main Menu       \n" \
-            "          __________           ________________          \n" \
-            "         | New Game |         | Hi-Score Chart |         \n" \
-            "          ‾‾‾‾‾‾‾‾‾‾           ‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾          \n")
+    valid_selection = True
+    print("\n\n       Welcome to the CLI Chess Minigame Main Menu       \n" \
+              "          __________           ________________          \n" \
+              "         | New Game |         | Hi-Score Chart |         \n" \
+              "          ‾‾‾‾‾‾‾‾‾‾           ‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾          \n")
     selection = input('Please select an option by typing in the selection here:  ')
     if selection == 'New Game':
         h = False
@@ -208,6 +210,5 @@ while not valid_selection:
     elif selection == 'Hi-Score Chart':
         pass
     else:
-        input('That is not a valid option. Next time, please type one of the two options exactly as they apear. Click "Enter" to continue...')
-        print(' ')
+        input('\n\nThat is not a valid option. Next time, please type one of the two options exactly as they apear. Click "Enter" to continue...')
         valid_selection = False
