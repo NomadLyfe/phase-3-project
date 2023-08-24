@@ -26,6 +26,7 @@ class User(Base):
 
     id = Column(Integer(), primary_key=True)
     username = Column(Text())
+    password = Column(Text())
 
     game_users = relationship('GameUser', back_populates='user', cascade='all, delete-orphan')
     games = association_proxy('game_users', 'game', creator=lambda gm: GameUser(game=gm))
