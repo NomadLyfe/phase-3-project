@@ -1,8 +1,27 @@
 import string
 from random import choice as rc
-from constants import B_ROOK,B_KNIGHT,B_BISHOP,B_QUEEN,B_KING,B_BISHOP,B_KNIGHT,B_ROOK,B_PAWN,W_ROOK,W_KNIGHT,W_BISHOP,W_QUEEN,W_KING,W_BISHOP,W_KNIGHT,W_ROOK,W_PAWN,W_EMPTY,B_EMPTY,PAWN,KNIGHT,ROOK,BISHOP,QUEEN,KING,black_text,white_text,WHITE_PIECES,BLACK_PIECES,LETTERS,NUMBERS
+from constants import B_ROOK,B_KNIGHT,B_BISHOP,B_QUEEN,B_KING,B_BISHOP,B_KNIGHT,B_ROOK,B_PAWN,KNIGHT,ROOK,BISHOP,QUEEN,KING,black_text,white_text,WHITE_PIECES,BLACK_PIECES,LETTERS,NUMBERS
 from chess_classes import PawnAction,KnightAction,RookAction,BishopAction,QueenAction,KingAction
-from models import Game, User
+from models import Game, User, session
+
+input_username = input("Welcome to Jeremy's CLI Chess Minigame! Play the computer and see how well you can do!\n" \
+                 "If you are new, please enter a unique username (if you are a returning player, type in your username):  ")
+username_output = session.query(User.username).filter(User.username == input_username).first()
+if username_output == None:
+    input_password = input("Please enter a password for your account:  ")
+    new_user = User(username = input_username, password = input_password)
+else:
+    input_password = input("Please enter your password:  ")
+    password_output = session.query(User.password).filter(User.username == username_output[0]).first()
+    if input_password != password_output[0]:
+        input("That is the wrong password, returning you to the first page. Click \"enter\" to continue...")
+        print(' ')
+    else:
+        returning_user = session.query(User).filter(User.username == username_output[0]).first()
+print("\n          _________          _______________          \n" \
+    "\n          |New Game|          |Hi-Score Chart|          \n" \
+    "\n          '\u203E''\u203E''\u203E''\u203E''\u203E'          '\u203E''\u203E''\u203E''\u203E''\u203E'          \n")
+input('Please select an option by typing in the selection here:  ')
 
 h = False
 new_game = Game(turn_count = 1)
