@@ -15,10 +15,9 @@ class PawnAction():
                     is_valid = True
                     if self.color == white_text and x_diff == 0:
                         if not board_state[NUMBERS.index(self.number)][LETTERS.index(self.letter)] in EMPTY_SPACES:
-                            input('\nThat is an illegal move! Click "Enter" to continue...')
-                            print('')
+                            pass
                         elif board_state[NUMBERS.index(self.number)][LETTERS.index(self.letter)] in list(BLACK_PIECES.values()):
-                            return False
+                            pass
                         elif y_diff == -1:
                             board_state[NUMBERS.index(self.number)][LETTERS.index(self.letter)] = self.color.format(PAWN)
                             board_state[NUMBERS.index(self.number)+1][LETTERS.index(self.letter)] = EMPTY_BOARD[NUMBERS.index(self.number)+1][LETTERS.index(self.letter)]
@@ -63,8 +62,6 @@ class PawnAction():
                     if self.color == white_text and abs(x_diff) == 1 and y_diff == -1:
                         if board_state[NUMBERS.index(self.number)][LETTERS.index(self.letter)] in (EMPTY_SPACES + list(WHITE_PIECES.values())):
                             pass
-                            #input('\nThat is an illegal move! Click "Enter" to continue...')
-                            #print('')
                         elif board_state[NUMBERS.index(self.number)][LETTERS.index(self.letter)] in list(BLACK_PIECES.values()):
                             board_state[NUMBERS.index(self.number)][LETTERS.index(self.letter)] = self.color.format(PAWN)
                             board_state[NUMBERS.index(self.number)-y_diff][LETTERS.index(self.letter)-x_diff] = EMPTY_BOARD[NUMBERS.index(self.number)-y_diff][LETTERS.index(self.letter)-x_diff]
@@ -86,17 +83,15 @@ class KnightAction():
         self.turn_count = turn_count
         self.color = color
     def move(self, board_state):
-        break_out_flag = False
         for i, row in enumerate(board_state):
             for j, piece in enumerate(row):
                 if piece == self.color.format(KNIGHT):
                     x_diff = LETTERS.index(self.letter) - j
                     y_diff = NUMBERS.index(self.number) - i
-                    if (abs(x_diff) == abs(y_diff) + 1 or abs(y_diff) == abs(x_diff) + 1) and (abs(x_diff) == 1 or abs(y_diff) == 1):
+                    if ((abs(x_diff) == abs(y_diff) + 1) and (abs(y_diff) == 1)) or ((abs(x_diff) == 1) and (abs(y_diff) == abs(x_diff) + 1)):
                         if (board_state[NUMBERS.index(self.number)][LETTERS.index(self.letter)] in list(WHITE_PIECES.values())) and self.color == white_text:
-                            input('\nThat is an illegal move! Click "Enter" to continue...')
-                            print('')
-                        elif (board_state[NUMBERS.index(self.number)][LETTERS.index(self.letter)] in list(BLACK_PIECES.values())) and self.color == black_text:
+                            pass
+                        elif not (board_state[NUMBERS.index(self.number)][LETTERS.index(self.letter)] in list(WHITE_PIECES.values())) and self.color == black_text:
                             return False
                         elif (not board_state[NUMBERS.index(self.number)][LETTERS.index(self.letter)] in EMPTY_SPACES) and self.color == white_text:
                             input('\nIf you are trying to capture, ensure you are properly using "x" in your chess notation! Click "Enter" to continue...')
@@ -106,14 +101,28 @@ class KnightAction():
                             board_state[NUMBERS.index(self.number)][LETTERS.index(self.letter)] = self.color.format(KNIGHT)
                             if self.color == white_text:
                                 self.turn_count += 1
-                            print(j, i, LETTERS.index(self.letter), NUMBERS.index(self.number))
                             return True
-                            #break_out_flag = True
-                            #break
-            if break_out_flag:
-                break
     def capture(self, board_state):
-        pass
+        for i, row in enumerate(board_state):
+            for j, piece in enumerate(row):
+                if piece == self.color.format(KNIGHT):
+                    x_diff = LETTERS.index(self.letter) - j
+                    y_diff = NUMBERS.index(self.number) - i
+                    if ((abs(x_diff) == abs(y_diff) + 1) and (abs(y_diff) == 1)) or ((abs(x_diff) == 1) and (abs(y_diff) == abs(x_diff) + 1)):
+                        if (board_state[NUMBERS.index(self.number)][LETTERS.index(self.letter)] in list(WHITE_PIECES.values())) and self.color == white_text:
+                            pass
+                        elif (board_state[NUMBERS.index(self.number)][LETTERS.index(self.letter)] in list(BLACK_PIECES.values())) and self.color == black_text:
+                            pass
+                        elif (board_state[NUMBERS.index(self.number)][LETTERS.index(self.letter)] in list(BLACK_PIECES.values())) and self.color == white_text:
+                            board_state[i][j] = EMPTY_BOARD[i][j]
+                            board_state[NUMBERS.index(self.number)][LETTERS.index(self.letter)] = self.color.format(KNIGHT)
+                            self.turn_count += 1
+                            return True
+                        elif (board_state[NUMBERS.index(self.number)][LETTERS.index(self.letter)] in list(WHITE_PIECES.values())) and self.color == black_text:
+                            captured_piece = board_state[NUMBERS.index(self.number)][LETTERS.index(self.letter)]
+                            board_state[i][j] = EMPTY_BOARD[i][j]
+                            board_state[NUMBERS.index(self.number)][LETTERS.index(self.letter)] = self.color.format(KNIGHT)
+                            return captured_piece
 
 class RookAction():
     def __init__(self, letter, number, turn_count, color):
