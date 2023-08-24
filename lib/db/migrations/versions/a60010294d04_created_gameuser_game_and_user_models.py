@@ -1,8 +1,8 @@
-"""create user, game, game_user tables
+"""created GameUser, Game, and User Models
 
-Revision ID: 9f48e34e9f1f
+Revision ID: a60010294d04
 Revises: 
-Create Date: 2023-08-23 17:40:45.763911
+Create Date: 2023-08-23 20:07:30.216176
 
 """
 from typing import Sequence, Union
@@ -12,7 +12,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision: str = '9f48e34e9f1f'
+revision: str = 'a60010294d04'
 down_revision: Union[str, None] = None
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
@@ -31,11 +31,12 @@ def upgrade() -> None:
     sa.PrimaryKeyConstraint('id')
     )
     op.create_table('game_users',
-    sa.Column('user_id', sa.Integer(), nullable=False),
-    sa.Column('game_id', sa.Integer(), nullable=False),
+    sa.Column('id', sa.Integer(), nullable=False),
+    sa.Column('user_id', sa.Integer(), nullable=True),
+    sa.Column('game_id', sa.Integer(), nullable=True),
     sa.ForeignKeyConstraint(['game_id'], ['games.id'], ),
     sa.ForeignKeyConstraint(['user_id'], ['users.id'], ),
-    sa.PrimaryKeyConstraint('user_id', 'game_id')
+    sa.PrimaryKeyConstraint('id')
     )
     # ### end Alembic commands ###
 
