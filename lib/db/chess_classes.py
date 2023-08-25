@@ -14,9 +14,7 @@ class PawnAction():
                     y_diff = NUMBERS.index(self.number) - i
                     is_valid = True
                     if self.color == white_text and x_diff == 0:
-                        if not board_state[NUMBERS.index(self.number)][LETTERS.index(self.letter)] in EMPTY_SPACES:
-                            pass
-                        elif board_state[NUMBERS.index(self.number)][LETTERS.index(self.letter)] in list(BLACK_PIECES.values()):
+                        if not (board_state[NUMBERS.index(self.number)][LETTERS.index(self.letter)] in EMPTY_SPACES):
                             pass
                         elif y_diff == -1:
                             board_state[NUMBERS.index(self.number)][LETTERS.index(self.letter)] = self.color.format(PAWN)
@@ -25,7 +23,7 @@ class PawnAction():
                             return True
                         elif y_diff == -2 and i == 6:
                             for k in range(1, abs(y_diff)):
-                                if (not board_state[NUMBERS.index(self.number)-k][LETTERS.index(self.letter)-k] in EMPTY_SPACES):
+                                if not (board_state[NUMBERS.index(self.number)-k][LETTERS.index(self.letter)] in EMPTY_SPACES):
                                     is_valid = False
                             if is_valid == True:
                                 board_state[NUMBERS.index(self.number)][LETTERS.index(self.letter)] = self.color.format(PAWN)
@@ -34,10 +32,8 @@ class PawnAction():
                                     self.turn_count += 1
                                 return True
                     elif self.color == black_text and x_diff == 0:
-                        if not board_state[NUMBERS.index(self.number)][LETTERS.index(self.letter)] in EMPTY_SPACES:
-                            return False
-                        elif board_state[NUMBERS.index(self.number)][LETTERS.index(self.letter)] in list(WHITE_PIECES.values()):
-                            return False
+                        if not (board_state[NUMBERS.index(self.number)][LETTERS.index(self.letter)] in EMPTY_SPACES):
+                            pass
                         elif y_diff == 1:
                             board_state[NUMBERS.index(self.number)][LETTERS.index(self.letter)] = self.color.format(PAWN)
                             board_state[NUMBERS.index(self.number)-1][LETTERS.index(self.letter)] = EMPTY_BOARD[NUMBERS.index(self.number)-1][LETTERS.index(self.letter)]
@@ -45,7 +41,7 @@ class PawnAction():
                         elif y_diff == 2 and i == 1:
                             is_valid = True
                             for k in range(1, abs(y_diff)):
-                                if (not board_state[NUMBERS.index(self.number)-k][LETTERS.index(self.letter)-k] in EMPTY_SPACES):
+                                if (not board_state[NUMBERS.index(self.number)-k][LETTERS.index(self.letter)] in EMPTY_SPACES):
                                     is_valid = False
                             if is_valid == True:
                                 board_state[NUMBERS.index(self.number)][LETTERS.index(self.letter)] = self.color.format(PAWN)
@@ -91,11 +87,12 @@ class KnightAction():
                     if ((abs(x_diff) == abs(y_diff) + 1) and (abs(y_diff) == 1)) or ((abs(x_diff) == 1) and (abs(y_diff) == abs(x_diff) + 1)):
                         if (board_state[NUMBERS.index(self.number)][LETTERS.index(self.letter)] in list(WHITE_PIECES.values())) and self.color == white_text:
                             pass
-                        elif not (board_state[NUMBERS.index(self.number)][LETTERS.index(self.letter)] in list(WHITE_PIECES.values())) and self.color == black_text:
-                            return False
+                        elif (board_state[NUMBERS.index(self.number)][LETTERS.index(self.letter)] in list(WHITE_PIECES.values())) and self.color == black_text:
+                            pass
                         elif (not board_state[NUMBERS.index(self.number)][LETTERS.index(self.letter)] in EMPTY_SPACES) and self.color == white_text:
-                            input('\nIf you are trying to capture, ensure you are properly using "x" in your chess notation! Click "Enter" to continue...')
-                            print('')
+                            #input('\nIf you are trying to capture, ensure you are properly using "x" in your chess notation! Click "Enter" to continue...')
+                            #print('')
+                            pass
                         else:
                             board_state[i][j] = EMPTY_BOARD[i][j]
                             board_state[NUMBERS.index(self.number)][LETTERS.index(self.letter)] = self.color.format(KNIGHT)
@@ -113,15 +110,12 @@ class KnightAction():
                             pass
                         elif (board_state[NUMBERS.index(self.number)][LETTERS.index(self.letter)] in list(BLACK_PIECES.values())) and self.color == black_text:
                             pass
-                        elif (board_state[NUMBERS.index(self.number)][LETTERS.index(self.letter)] in list(BLACK_PIECES.values())) and self.color == white_text:
-                            board_state[i][j] = EMPTY_BOARD[i][j]
-                            board_state[NUMBERS.index(self.number)][LETTERS.index(self.letter)] = self.color.format(KNIGHT)
-                            self.turn_count += 1
-                            return True
-                        elif (board_state[NUMBERS.index(self.number)][LETTERS.index(self.letter)] in list(WHITE_PIECES.values())) and self.color == black_text:
+                        elif not (board_state[NUMBERS.index(self.number)][LETTERS.index(self.letter)] in EMPTY_SPACES):
                             captured_piece = board_state[NUMBERS.index(self.number)][LETTERS.index(self.letter)]
                             board_state[i][j] = EMPTY_BOARD[i][j]
                             board_state[NUMBERS.index(self.number)][LETTERS.index(self.letter)] = self.color.format(KNIGHT)
+                            if self.color == white_text:
+                                self.turn_count += 1
                             return captured_piece
 
 class RookAction():
@@ -138,8 +132,9 @@ class RookAction():
                     y_diff = NUMBERS.index(self.number) - i
                     if x_diff == 0 or y_diff == 0 and not(x_diff == 0 and y_diff):
                         if (board_state[NUMBERS.index(self.number)][LETTERS.index(self.letter)] in list(BLACK_PIECES.values())) and self.color == white_text:
-                            input('\nIf you are trying to capture, ensure you are properly using "x" in your chess notation! Click "Enter" to continue...')
-                            print('')
+                            #input('\nIf you are trying to capture, ensure you are properly using "x" in your chess notation! Click "Enter" to continue...')
+                            #print('')
+                            pass
                         elif (board_state[NUMBERS.index(self.number)][LETTERS.index(self.letter)] in list(BLACK_PIECES.values())) and self.color == black_text:                            
                             pass
                         elif (board_state[NUMBERS.index(self.number)][LETTERS.index(self.letter)] in EMPTY_SPACES):
@@ -184,7 +179,6 @@ class RookAction():
                             pass
                         elif (board_state[NUMBERS.index(self.number)][LETTERS.index(self.letter)] in list(BLACK_PIECES.values())) and self.color == white_text:
                             is_valid = True
-                            print('boi3')
                             if x_diff == 0:
                                 for k in range(1, abs(y_diff)):
                                     if y_diff > 0:
@@ -193,7 +187,6 @@ class RookAction():
                                     else:
                                         print(k)
                                         if not (board_state[NUMBERS.index(self.number)+k][LETTERS.index(self.letter)] in EMPTY_SPACES):
-                                            print('boi2')
                                             is_valid = False
                             else:
                                 for k in range(1, abs(x_diff)):
@@ -211,7 +204,6 @@ class RookAction():
                                 return True
                         elif (board_state[NUMBERS.index(self.number)][LETTERS.index(self.letter)] in list(WHITE_PIECES.values())) and self.color == black_text:                            
                             is_valid = True
-                            print('boi3')
                             if x_diff == 0:
                                 for k in range(1, abs(y_diff)):
                                     if y_diff > 0:
@@ -220,7 +212,6 @@ class RookAction():
                                     else:
                                         print(k)
                                         if not (board_state[NUMBERS.index(self.number)+k][LETTERS.index(self.letter)] in EMPTY_SPACES):
-                                            print('boi2')
                                             is_valid = False
                             else:
                                 for k in range(1, abs(x_diff)):
@@ -245,7 +236,6 @@ class BishopAction():
         self.turn_count = turn_count
         self.color = color
     def move(self, board_state):
-        break_out_flag = False
         for i, row in enumerate(board_state):
             for j, piece in enumerate(row):
                 if piece == self.color.format(BISHOP):
@@ -267,25 +257,51 @@ class BishopAction():
                                 if (not board_state[NUMBERS.index(self.number)+k][LETTERS.index(self.letter)+k] in EMPTY_SPACES):
                                     is_valid = False
                         if (board_state[NUMBERS.index(self.number)][LETTERS.index(self.letter)] in list(BLACK_PIECES.values())) and self.color == white_text:
-                            input('\nIf you are trying to capture, ensure you are properly using "x" in your chess notation! Click "Enter" to continue...')
-                            print('')
+                            #input('\nIf you are trying to capture, ensure you are properly using "x" in your chess notation! Click "Enter" to continue...')
+                            #print('')
+                            pass
+                        elif (board_state[NUMBERS.index(self.number)][LETTERS.index(self.letter)] in list(WHITE_PIECES.values())) and self.color == white_text:
+                            pass
                         elif (board_state[NUMBERS.index(self.number)][LETTERS.index(self.letter)] in list(BLACK_PIECES.values())) and self.color == black_text:
-                            return False
+                            pass
                         elif is_valid and (board_state[NUMBERS.index(self.number)][LETTERS.index(self.letter)] in EMPTY_SPACES):
                             board_state[i][j] = EMPTY_BOARD[i][j]
                             board_state[NUMBERS.index(self.number)][LETTERS.index(self.letter)] = self.color.format(BISHOP)
                             if self.color == white_text:
                                 self.turn_count += 1
                             return True
-                            #break_out_flag = True
-                            #break
-                        elif self.color == white_text:
-                            input('\nThat is an illegal move! Click "Enter" to continue...')
-                            print('')
-            if break_out_flag:
-                break
     def capture(self, board_state):
-        pass
+        for i, row in enumerate(board_state):
+            for j, piece in enumerate(row):
+                if piece == self.color.format(BISHOP):
+                    x_diff = LETTERS.index(self.letter) - j
+                    y_diff = NUMBERS.index(self.number) - i
+                    if (x_diff == y_diff) or (x_diff == -y_diff):
+                        is_valid = True
+                        for k in range(1, abs(x_diff)):
+                            if x_diff == y_diff and x_diff > 0:
+                                if (not board_state[NUMBERS.index(self.number)-k][LETTERS.index(self.letter)-k] in EMPTY_SPACES):
+                                    is_valid = False
+                            elif x_diff != y_diff and x_diff < 0:
+                                if (not board_state[NUMBERS.index(self.number)-k][LETTERS.index(self.letter)+k] in EMPTY_SPACES):
+                                    is_valid = False
+                            elif x_diff != y_diff and y_diff < 0:
+                                if (not board_state[NUMBERS.index(self.number)+k][LETTERS.index(self.letter)-k] in EMPTY_SPACES):
+                                    is_valid = False
+                            else:
+                                if (not board_state[NUMBERS.index(self.number)+k][LETTERS.index(self.letter)+k] in EMPTY_SPACES):
+                                    is_valid = False
+                        if (board_state[NUMBERS.index(self.number)][LETTERS.index(self.letter)] in list(WHITE_PIECES.values())) and self.color == white_text:
+                            pass
+                        elif (board_state[NUMBERS.index(self.number)][LETTERS.index(self.letter)] in list(BLACK_PIECES.values())) and self.color == black_text:
+                            pass
+                        elif is_valid and not (board_state[NUMBERS.index(self.number)][LETTERS.index(self.letter)] in EMPTY_SPACES):
+                            captured_piece = board_state[NUMBERS.index(self.number)][LETTERS.index(self.letter)]
+                            board_state[i][j] = EMPTY_BOARD[i][j]
+                            board_state[NUMBERS.index(self.number)][LETTERS.index(self.letter)] = self.color.format(KNIGHT)
+                            if self.color == white_text:
+                                self.turn_count += 1
+                            return captured_piece
 
 class QueenAction():
     def __init__(self, letter, number, turn_count, color):

@@ -219,7 +219,7 @@ while not valid_selection:
                                 is_move_possible = True
                                 captured_piece = pawn_is_capturing.capture(board_state)
                         if is_move_possible:
-                            print(f'\nBlack responds by capturing {captured_piece} with {random_piece} at {random_letter}{random_number}\n')
+                            print(f'\nBlack responds by capturing {captured_piece}  with {random_piece}  at {random_letter}{random_number}\n')
                         #print(f'{random_piece} at ({random_x}, {random_y}) going to ({random_letter}, {random_number}).')
                     else:
                         if random_piece == B_KNIGHT:
@@ -247,7 +247,7 @@ while not valid_selection:
                             if moving_pawn.move(board_state):
                                 is_move_possible = True
                         if is_move_possible:
-                            print(f'\nBlack responds with {random_piece} to {random_letter}{random_number}\n')
+                            print(f'\nBlack responds with {random_piece}  to {random_letter}{random_number}\n')
                         #print(f'{random_piece} at ({random_x}, {random_y}) going to ({random_letter}, {random_number}).')
     elif selection == 'Hi-Score Chart':
         pass
