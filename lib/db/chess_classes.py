@@ -26,8 +26,7 @@ class PawnAction(ChessPieceAction):
                 if piece == self.color.format(PAWN):
                     x_diff = LETTERS.index(self.letter) - j
                     y_diff = NUMBERS.index(self.number) - i
-                    is_valid = True
-                    if x_diff == 0:
+                    if x_diff == 0 and not is_capture:
                         if not (board_state[NUMBERS.index(self.number)][LETTERS.index(self.letter)] in EMPTY_SPACES):
                             pass
                         elif y_diff == (-1 if self.color == white_text else 1):
@@ -45,10 +44,15 @@ class PawnAction(ChessPieceAction):
                                 self.turn_count += 1
                             return True
                     elif abs(x_diff) == 1 and y_diff == (-1 if self.color == white_text else 1):
-                        if is_capture:
+                        if (board_state[NUMBERS.index(self.number)][LETTERS.index(self.letter)] in list(WHITE_PIECES.values())) and self.color == white_text:
+                            pass
+                        elif (board_state[NUMBERS.index(self.number)][LETTERS.index(self.letter)] in list(BLACK_PIECES.values())) and self.color == black_text:
+                            pass
+                        elif is_capture and not (board_state[NUMBERS.index(self.number)][LETTERS.index(self.letter)] in EMPTY_SPACES):
+                            captured_piece = board_state[NUMBERS.index(self.number)][LETTERS.index(self.letter)]
                             self.capture(board_state, PAWN, (j, i))
-                            return True
-                        else:
+                            return captured_piece
+                        elif self.color == white_text:
                             print('\n\nIf you are trying to capture, ensure you are properly using "x" in your chess notation!')
                             return False
         return False
@@ -67,14 +71,15 @@ class KnightAction(ChessPieceAction):
                             pass
                         elif (board_state[NUMBERS.index(self.number)][LETTERS.index(self.letter)] in list(BLACK_PIECES.values())) and self.color == black_text:
                             pass
-                        elif (board_state[NUMBERS.index(self.number)][LETTERS.index(self.letter)] in list(BLACK_PIECES.values())) and self.color == white_text:
+                        elif not (board_state[NUMBERS.index(self.number)][LETTERS.index(self.letter)] in EMPTY_SPACES):
                             if is_capture:
+                                captured_piece = board_state[NUMBERS.index(self.number)][LETTERS.index(self.letter)]
                                 self.capture(board_state, KNIGHT, (j, i))
-                                return True
+                                return captured_piece
                             else:
                                 print('\n\nIf you are trying to capture, ensure you are properly using "x" in your chess notation!')
                                 return False
-                        elif (board_state[NUMBERS.index(self.number)][LETTERS.index(self.letter)] in EMPTY_SPACES):
+                        elif (board_state[NUMBERS.index(self.number)][LETTERS.index(self.letter)] in EMPTY_SPACES) and not is_capture:
                             board_state[i][j] = EMPTY_BOARD[i][j]
                             board_state[NUMBERS.index(self.number)][LETTERS.index(self.letter)] = self.color.format(KNIGHT)
                             if self.color == white_text:
@@ -100,14 +105,15 @@ class RookAction(ChessPieceAction):
                             pass
                         elif (board_state[NUMBERS.index(self.number)][LETTERS.index(self.letter)] in list(BLACK_PIECES.values())) and self.color == black_text:
                             pass
-                        elif (board_state[NUMBERS.index(self.number)][LETTERS.index(self.letter)] in list(BLACK_PIECES.values())) and self.color == white_text:
+                        elif not (board_state[NUMBERS.index(self.number)][LETTERS.index(self.letter)] in EMPTY_SPACES):
                             if is_capture:
+                                captured_piece = board_state[NUMBERS.index(self.number)][LETTERS.index(self.letter)]
                                 self.capture(board_state, ROOK, (j, i))
-                                return True
+                                return captured_piece
                             else:
                                 print('\n\nIf you are trying to capture, ensure you are properly using "x" in your chess notation!')
                                 return False
-                        elif (board_state[NUMBERS.index(self.number)][LETTERS.index(self.letter)] in EMPTY_SPACES):
+                        elif (board_state[NUMBERS.index(self.number)][LETTERS.index(self.letter)] in EMPTY_SPACES) and not is_capture:
                             board_state[i][j] = EMPTY_BOARD[i][j]
                             board_state[NUMBERS.index(self.number)][LETTERS.index(self.letter)] = self.color.format(ROOK)
                             if self.color == white_text:
@@ -135,14 +141,15 @@ class BishopAction(ChessPieceAction):
                             pass
                         elif (board_state[NUMBERS.index(self.number)][LETTERS.index(self.letter)] in list(BLACK_PIECES.values())) and self.color == black_text:
                             pass
-                        elif (board_state[NUMBERS.index(self.number)][LETTERS.index(self.letter)] in list(BLACK_PIECES.values())) and self.color == white_text:
+                        elif not (board_state[NUMBERS.index(self.number)][LETTERS.index(self.letter)] in EMPTY_SPACES):
                             if is_capture:
+                                captured_piece = board_state[NUMBERS.index(self.number)][LETTERS.index(self.letter)]
                                 self.capture(board_state, BISHOP, (j, i))
-                                return True
+                                return captured_piece
                             else:
                                 print('\n\nIf you are trying to capture, ensure you are properly using "x" in your chess notation!')
                                 return False
-                        elif (board_state[NUMBERS.index(self.number)][LETTERS.index(self.letter)] in EMPTY_SPACES):
+                        elif (board_state[NUMBERS.index(self.number)][LETTERS.index(self.letter)] in EMPTY_SPACES) and not is_capture:
                             board_state[i][j] = EMPTY_BOARD[i][j]
                             board_state[NUMBERS.index(self.number)][LETTERS.index(self.letter)] = self.color.format(BISHOP)
                             if self.color == white_text:
@@ -177,14 +184,15 @@ class QueenAction(ChessPieceAction):
                             pass
                         elif (board_state[NUMBERS.index(self.number)][LETTERS.index(self.letter)] in list(WHITE_PIECES.values())) and self.color == white_text:
                             pass
-                        elif (board_state[NUMBERS.index(self.number)][LETTERS.index(self.letter)] in list(BLACK_PIECES.values())) and self.color == white_text:
+                        elif not (board_state[NUMBERS.index(self.number)][LETTERS.index(self.letter)] in EMPTY_SPACES):
                             if is_capture:
+                                captured_piece = board_state[NUMBERS.index(self.number)][LETTERS.index(self.letter)]
                                 self.capture(board_state, QUEEN, (j, i))
-                                return True
+                                return captured_piece
                             else:
                                 print('\n\nIf you are trying to capture, ensure you are properly using "x" in your chess notation!')
                                 return False
-                        elif (board_state[NUMBERS.index(self.number)][LETTERS.index(self.letter)] in EMPTY_SPACES):
+                        elif (board_state[NUMBERS.index(self.number)][LETTERS.index(self.letter)] in EMPTY_SPACES) and not is_capture:
                             board_state[i][j] = EMPTY_BOARD[i][j]
                             board_state[NUMBERS.index(self.number)][LETTERS.index(self.letter)] = self.color.format(QUEEN)
                             if self.color == white_text:
@@ -206,14 +214,15 @@ class KingAction(ChessPieceAction):
                             pass
                         elif (board_state[NUMBERS.index(self.number)][LETTERS.index(self.letter)] in list(WHITE_PIECES.values())) and self.color == white_text:
                             pass
-                        elif (board_state[NUMBERS.index(self.number)][LETTERS.index(self.letter)] in list(BLACK_PIECES.values())) and self.color == white_text:
+                        elif not (board_state[NUMBERS.index(self.number)][LETTERS.index(self.letter)] in EMPTY_SPACES):
                             if is_capture:
+                                captured_piece = board_state[NUMBERS.index(self.number)][LETTERS.index(self.letter)]
                                 self.capture(board_state, KING, (j, i))
-                                return True
+                                return captured_piece
                             else:
                                 print('\n\nIf you are trying to capture, ensure you are properly using "x" in your chess notation!')
                                 return False
-                        elif board_state[NUMBERS.index(self.number)][LETTERS.index(self.letter)] in EMPTY_SPACES:
+                        elif (board_state[NUMBERS.index(self.number)][LETTERS.index(self.letter)] in EMPTY_SPACES) and not is_capture:
                             board_state[i][j] = EMPTY_BOARD[i][j]
                             board_state[NUMBERS.index(self.number)][LETTERS.index(self.letter)] = self.color.format(KING)
                             if self.color == white_text:
