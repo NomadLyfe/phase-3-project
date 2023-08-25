@@ -4,7 +4,7 @@ from constants import B_ROOK,B_KNIGHT,B_BISHOP,B_QUEEN,B_KING,B_BISHOP,B_KNIGHT,
 from chess_classes import PawnAction,KnightAction,RookAction,BishopAction,QueenAction,KingAction
 from models import Game, User, session
 
-valid_login = False
+'''valid_login = False
 user = None
 while not valid_login:
     valid_login = True
@@ -30,7 +30,9 @@ while not valid_selection:
               "          __________           ________________          \n" \
               "         | New Game |         | Hi-Score Chart |         \n" \
               "          ‾‾‾‾‾‾‾‾‾‾           ‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾          \n")
-    selection = input('Please select an option by typing in the selection here:  ')
+    selection = input('Please select an option by typing in the selection here:  ')'''
+if True:    
+    selection = 'New Game'
     if selection == 'New Game':
         h = False
         new_game = Game(turn_count = 1)
@@ -85,12 +87,14 @@ while not valid_selection:
             elif '#' in move:
                 pass
             else:
+                is_capture = False
                 piece_key = 'P'
                 (row, column) = (move[0], move[1])
                 if move[0] in string.ascii_uppercase:
                     piece_key = move[0]
                     (row, column) = (move[1], move[2])  
                 if 'x' in move:
+                    is_capture = True
                     (row, column) = (move[2], move[3])             
                 piece_to_action = {
                     'N': KnightAction,
@@ -101,13 +105,13 @@ while not valid_selection:
                     'P': PawnAction
                 }
                 moving_piece = piece_to_action[piece_key](row, column, turn_count, white_text)
-                possible = moving_piece.move(board_state)
+                possible = moving_piece.move(board_state, is_capture)
                 turn_count = moving_piece.turn_count
                 if not possible:
                     input('\nThat is an illegal move! Click "Enter" to continue...')
                     print('')
             
-            if not h and move and possible:
+            '''if not h and move and possible:
                 is_move_possible = False
                 while not is_move_possible:
                     random_capture = rc([True, False])
@@ -182,7 +186,7 @@ while not valid_selection:
                                 is_move_possible = True
                         if is_move_possible:
                             print(f'\nBlack responds with {random_piece}  to {random_letter}{random_number}\n')
-                        #print(f'{random_piece} at ({random_x}, {random_y}) going to ({random_letter}, {random_number}).')
+                        #print(f'{random_piece} at ({random_x}, {random_y}) going to ({random_letter}, {random_number}).')'''
     elif selection == 'Hi-Score Chart':
         pass
     else:
