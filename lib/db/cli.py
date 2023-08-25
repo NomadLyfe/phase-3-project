@@ -1,6 +1,6 @@
 import string
 from random import choice as rc
-from constants import B_ROOK,B_KNIGHT,B_BISHOP,B_QUEEN,B_KING,B_BISHOP,B_KNIGHT,B_ROOK,B_PAWN,KNIGHT,ROOK,BISHOP,QUEEN,KING,black_text,white_text,WHITE_PIECES,BLACK_PIECES,LETTERS,NUMBERS
+from constants import B_ROOK,B_KNIGHT,B_BISHOP,B_QUEEN,B_KING,B_BISHOP,B_KNIGHT,B_ROOK,B_PAWN,KNIGHT,ROOK,BISHOP,QUEEN,KING,PAWN,black_text,white_text,WHITE_PIECES,BLACK_PIECES,LETTERS,NUMBERS
 from chess_classes import PawnAction,KnightAction,RookAction,BishopAction,QueenAction,KingAction
 from models import Game, User, session
 
@@ -78,50 +78,6 @@ while not valid_selection:
             elif not move:
                 input('\nAn empty input is not a valid input! Click "Enter" to continue...')
                 print('')
-            elif 'x' in move:
-                if move[0] in string.ascii_uppercase:
-                    if WHITE_PIECES[move[0]] == white_text.format(KNIGHT):
-                        knight_is_capture = KnightAction(move[2], move[3], turn_count, white_text)
-                        possible = knight_is_capture.capture(board_state)
-                        turn_count = knight_is_capture.turn_count
-                        if not possible:
-                            input('\nThat is an illegal move! Click "Enter" to continue...')
-                            print('')
-                    elif WHITE_PIECES[move[0]] == white_text.format(ROOK):
-                        rook_is_capture = RookAction(move[2], move[3], turn_count, white_text)
-                        possible = rook_is_capture.capture(board_state)
-                        turn_count = rook_is_capture.turn_count
-                        if not possible:
-                            input('\nThat is an illegal move! Click "Enter" to continue...')
-                            print('')
-                    elif WHITE_PIECES[move[0]] == white_text.format(BISHOP):
-                        bishop_is_capture = BishopAction(move[2], move[3], turn_count, white_text)
-                        possible = bishop_is_capture.capture(board_state)
-                        turn_count = bishop_is_capture.turn_count
-                        if not possible:
-                            input('\nThat is an illegal move! Click "Enter" to continue...')
-                            print('')
-                    elif WHITE_PIECES[move[0]] == white_text.format(KING):
-                        king_is_capture = KingAction(move[2], move[3], turn_count, white_text)
-                        possible = king_is_capture.capture(board_state)
-                        turn_count = king_is_capture.turn_count
-                        if not possible:
-                            input('\nThat is an illegal move! Click "Enter" to continue...')
-                            print('')
-                    elif WHITE_PIECES[move[0]] == white_text.format(QUEEN):
-                        queen_is_capture = QueenAction(move[2], move[3], turn_count, white_text)
-                        possible = queen_is_capture.capture(board_state)
-                        turn_count = queen_is_capture.turn_count
-                        if not possible:
-                            input('\nThat is an illegal move! Click "Enter" to continue...')
-                            print('')
-                else:
-                    pawn_is_capture = PawnAction(move[2], move[3], turn_count, white_text)
-                    possible = pawn_is_capture.capture(board_state)
-                    turn_count = pawn_is_capture.turn_count
-                    if not possible:
-                        input('\nThat is an illegal move! Click "Enter" to continue...')
-                        print('')
             elif 'O' in move:
                 pass
             elif '+' in move:
@@ -129,49 +85,27 @@ while not valid_selection:
             elif '#' in move:
                 pass
             else:
+                piece_key = 'P'
+                (row, column) = (move[0], move[1])
                 if move[0] in string.ascii_uppercase:
-                    if WHITE_PIECES[move[0]] == white_text.format(KNIGHT):
-                        moving_knight = KnightAction(move[1], move[2], turn_count, white_text)
-                        possible = moving_knight.move(board_state)
-                        turn_count = moving_knight.turn_count
-                        if not possible:
-                            input('\nThat is an illegal move! Click "Enter" to continue...')
-                            print('')
-                    elif WHITE_PIECES[move[0]] == white_text.format(ROOK):
-                        moving_rook = RookAction(move[1], move[2], turn_count, white_text)
-                        possible = moving_rook.move(board_state)
-                        turn_count = moving_rook.turn_count
-                        if not possible:
-                            input('\nThat is an illegal move! Click "Enter" to continue...')
-                            print('')
-                    elif WHITE_PIECES[move[0]] == white_text.format(BISHOP):
-                        moving_bishop = BishopAction(move[1], move[2], turn_count, white_text)
-                        possible = moving_bishop.move(board_state)
-                        turn_count = moving_bishop.turn_count
-                        if not possible:
-                            input('\nThat is an illegal move! Click "Enter" to continue...')
-                            print('')
-                    elif WHITE_PIECES[move[0]] == white_text.format(KING):
-                        moving_king = KingAction(move[1], move[2], turn_count, white_text)
-                        possible = moving_king.move(board_state)
-                        turn_count = moving_king.turn_count
-                        if not possible:
-                            input('\nThat is an illegal move! Click "Enter" to continue...')
-                            print('')
-                    elif WHITE_PIECES[move[0]] == white_text.format(QUEEN):
-                        moving_queen = QueenAction(move[1], move[2], turn_count, white_text)
-                        possible = moving_queen.move(board_state)
-                        turn_count = moving_queen.turn_count
-                        if not possible:
-                            input('\nThat is an illegal move! Click "Enter" to continue...')
-                            print('')
-                else:
-                    moving_pawn = PawnAction(move[0], move[1], turn_count, white_text)
-                    possible = moving_pawn.move(board_state)
-                    turn_count = moving_pawn.turn_count
-                    if not possible:
-                            input('\nThat is an illegal move! Click "Enter" to continue...')
-                            print('')
+                    piece_key = move[0]
+                    (row, column) = (move[1], move[2])  
+                if 'x' in move:
+                    (row, column) = (move[2], move[3])             
+                piece_to_action = {
+                    'N': KnightAction,
+                    'R': RookAction,
+                    'B': BishopAction,
+                    'K': KingAction,
+                    'Q': QueenAction,
+                    'P': PawnAction
+                }
+                moving_piece = piece_to_action[piece_key](row, column, turn_count, white_text)
+                possible = moving_piece.move(board_state)
+                turn_count = moving_piece.turn_count
+                if not possible:
+                    input('\nThat is an illegal move! Click "Enter" to continue...')
+                    print('')
             
             if not h and move and possible:
                 is_move_possible = False
@@ -190,34 +124,34 @@ while not valid_selection:
                         captured_piece = None
                         if random_piece == B_KNIGHT:
                             knight_is_capturing = KnightAction(random_letter, random_number, turn_count, black_text)
-                            if knight_is_capturing.capture(board_state):
+                            if knight_is_capturing.move(board_state):
                                 is_move_possible = True
-                                captured_piece = knight_is_capturing.capture(board_state)
+                                captured_piece = knight_is_capturing.move(board_state)
                         elif random_piece == B_ROOK:
                             rook_is_capturing = RookAction(random_letter, random_number, turn_count, black_text)
-                            if rook_is_capturing.capture(board_state):
+                            if rook_is_capturing.move(board_state):
                                 is_move_possible = True
-                                captured_piece = rook_is_capturing.capture(board_state)
+                                captured_piece = rook_is_capturing.move(board_state)
                         elif random_piece == B_BISHOP:
                             bishop_is_capturing = BishopAction(random_letter, random_number, turn_count, black_text)
-                            if bishop_is_capturing.capture(board_state):
+                            if bishop_is_capturing.move(board_state):
                                 is_move_possible = True
-                                captured_piece = bishop_is_capturing.capture(board_state)
+                                captured_piece = bishop_is_capturing.move(board_state)
                         elif random_piece == B_KING:
                             king_is_capturing = KingAction(random_letter, random_number, turn_count, black_text)
-                            if king_is_capturing.capture(board_state):
+                            if king_is_capturing.move(board_state):
                                 is_move_possible = True
-                                captured_piece = king_is_capturing.capture(board_state)
+                                captured_piece = king_is_capturing.move(board_state)
                         elif random_piece == B_QUEEN:
                             queen_is_capturing = QueenAction(random_letter, random_number, turn_count, black_text)
-                            if queen_is_capturing.capture(board_state):
+                            if queen_is_capturing.move(board_state):
                                 is_move_possible = True
-                                captured_piece = queen_is_capturing.capture(board_state)
+                                captured_piece = queen_is_capturing.move(board_state)
                         elif random_piece == B_PAWN:
                             pawn_is_capturing = PawnAction(random_letter, random_number, turn_count, black_text)
-                            if pawn_is_capturing.capture(board_state):
+                            if pawn_is_capturing.move(board_state):
                                 is_move_possible = True
-                                captured_piece = pawn_is_capturing.capture(board_state)
+                                captured_piece = pawn_is_capturing.move(board_state)
                         if is_move_possible:
                             print(f'\nBlack responds by capturing {captured_piece}  with {random_piece}  at {random_letter}{random_number}\n')
                         #print(f'{random_piece} at ({random_x}, {random_y}) going to ({random_letter}, {random_number}).')
