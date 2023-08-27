@@ -10,16 +10,21 @@ engine = create_engine('sqlite:///chessdatabase.db')
 Session = sessionmaker(bind=engine)
 session = Session()
 
-class GameUser(Base):
-    __tablename__ = 'game_users'
+class HiScoreChart(Base):
+    __tablename__ = 'hi_score_chart'
 
     id = Column(Integer(), primary_key=True)
 
     user_id = Column(Integer(), ForeignKey('users.id'))
     game_id = Column(Integer(), ForeignKey('games.id'))
+    turn_count = Column(Integer())
 
-    game = relationship('Game', back_populates='game_users')
-    user = relationship('User', back_populates='game_users')
+    game = relationship('Game', back_populates='hi_score_chart')
+    user = relationship('User', back_populates='hi_score_chart')
+    
+    @property
+    def username(self):
+        return self.user.username
 
 class User(Base):
     __tablename__ = 'users'
@@ -28,8 +33,8 @@ class User(Base):
     username = Column(Text())
     password = Column(Text())
 
-    game_users = relationship('GameUser', back_populates='user', cascade='all, delete-orphan')
-    games = association_proxy('game_users', 'game', creator=lambda gm: GameUser(game=gm))
+    hi_score_chart = relationship('HiScoreChart', back_populates='user', cascade='all, delete-orphan')
+    games = association_proxy('hi_score_chart', 'game', creator=lambda gm: HiScoreChart(game=gm))
 
 class Game(Base):
     __tablename__ = 'games'
@@ -39,5 +44,5 @@ class Game(Base):
     board_state = board_state
     active_game = True
     
-    game_users = relationship('GameUser', back_populates='game', cascade='all, delete-orphan')
-    users = association_proxy('game_users', 'user', creator=lambda us: GameUser(user=us))
+    hi_score_chart = relationship('HiScoreChart', back_populates='game', cascade='all, delete-orphan')
+    users = association_proxy('hi_score_chart', 'user', creator=lambda us: HiScoreChart(user=us))

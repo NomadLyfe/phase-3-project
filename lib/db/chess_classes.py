@@ -43,7 +43,7 @@ class PawnAction(ChessPieceAction):
                             if self.color == white_text:
                                 self.turn_count += 1
                             return True
-                    elif abs(x_diff) == 1 and y_diff == (-1 if self.color == white_text else 1):
+                    elif abs(x_diff) == 1 and y_diff == (-1 if self.color == white_text else 1) and is_capture:
                         if (board_state[NUMBERS.index(self.number)][LETTERS.index(self.letter)] in list(WHITE_PIECES.values())) and self.color == white_text:
                             pass
                         elif (board_state[NUMBERS.index(self.number)][LETTERS.index(self.letter)] in list(BLACK_PIECES.values())) and self.color == black_text:
