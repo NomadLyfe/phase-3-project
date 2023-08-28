@@ -5,20 +5,26 @@ from chess_classes import PawnAction,KnightAction,RookAction,BishopAction,QueenA
 from models import Game, User, HiScoreChart, session
 
 valid_login = False
-user = None
+curr_user = None
 while not valid_login:
-    valid_login = True
     input_username = input("\n\nWelcome to Jeremy's CLI Chess Minigame! Play the computer and see how well you can do!\n\n\n" \
                     "If you are new, please enter a unique username (if you are a returning player, type in your username):  ")
     username_output = session.query(User.username).filter(User.username == input_username).first()
     if username_output == None:
         input_password = input("\n\nPlease enter a new password for your account:  ")
-        user = User(username = input_username, password = input_password)
+        if input_password == None:
+            input('\n\nThat is an invalid password! Click "enter" to be returned to the first page...')
+            print(' ')
+            valid_login = False
+        else:
+            curr_user = User(username = input_username, password = input_password)
+            valid_login = True
     else:
         input_password = input("\n\nPlease enter your password:  ")
         password_output = session.query(User.password).filter(User.username == username_output[0]).first()
         if input_password == password_output[0]:
-            user = session.query(User).filter(User.username == username_output[0]).first()
+            curr_user = session.query(User).filter(User.username == username_output[0]).first()
+            valid_login = True
         else:
             input('\n\nThat is the wrong password! Click "enter" to be returned to the first page...')
             print(' ')
@@ -33,6 +39,7 @@ while not valid_selection:
     selection = input('Please type 1 or 2 to make a selection:  ')
     if selection == '1' or selection == 'New Game':
         h = False
+        is_win = False
         new_game = Game(turn_count = 1)
         board_state = new_game.board_state
         turn_count = new_game.turn_count
@@ -99,7 +106,8 @@ while not valid_selection:
             elif '+' in move:
                 pass
             elif '#' in move:
-                pass
+                is_win = True
+                active_game = False
             else:
                 is_capture = False
                 piece_key = 'P'
@@ -148,16 +156,28 @@ while not valid_selection:
                     if is_move_possible:
                         print(f'\nBlack responds with {random_piece}  to {random_letter}{random_number}{f", capturing your {captured_piece}." if random_capture else "."}\n')
                     #print(f' Attempting: Capture is {random_capture}. {random_piece}  going to ({random_letter}, {random_number}).')
+        if is_win:
+            print('\n\nCongratulations, you won!!!')
+            print('\nThis game, your number of moves to win, and username will be saved on the Hi Score Chart!')
+            new_hi_score = HiScoreChart(user= curr_user, game= new_game, turn_count=new_game.turn_count)
+            input('\nPress "Enter" to return to the main menu...')
+            valid_selection = False
+        else:
+            print('The computer won. Try again next time!')
+            input('Press "Enter" to return to the main menu...')
+            valid_selection = False
     elif selection == '2' or selection == 'Hi-Score Chart':
         more_pages = True
         start = 0
         end = 10
+        chart = session.query(HiScoreChart).order_by(HiScoreChart.turn_count).all()
         while more_pages:
-            chart = session.query(HiScoreChart).order_by(HiScoreChart.turn_count).all()
-            print(len(chart))
+            if (end) >= len(chart):
+                end = len(chart)
+            print(f'\nGames {start+1} - {end} of {len(chart)}.\n')
             print('--------------------------------------')
             print('| User         | Game ID | Turns Won |')
-            print('--------------------------------------')
+            print('--------------------------------------\n--------------------------------------')
             for i in range(start,end):
                 spaces1 = '            '
                 for letter in chart[i].username:
@@ -170,13 +190,19 @@ while not valid_selection:
                     spaces3 = spaces3.replace(' ', '', 1)
                 print(f'| {chart[i].username}{spaces1} | {chart[i].game_id}{spaces2} | {chart[i].turn_count}{spaces3} |')
                 print('--------------------------------------')
-            inp = input('Submit "+" to go to the next page, "-" for the previous page, or just click "ENTER" to return to the Home Page:  ')
+            inp = input('\nSubmit "+" to go to the next page, "-" for the previous page, or "ENTER" to return to the Home Page:  ')
             if inp == '+':
-                start += 10
-                end += 10
+                if end != len(chart):
+                    start += 10
+                    end += 10
+                else:
+                    inp = input('\nThat was the last page of Hi Scores. Please submit "-" for the previous page or "Enter" to return to the Home Page:  ')
             if inp == '-':
-                start -= 10
-                end -= 10
+                if start != 0:
+                    start -= 10
+                    end -= 10
+                else:
+                    input('\nThis is the first page of Hi Scores, please press "Enter" to make another selection:  ')
             if inp == '':
                 more_pages = False
                 valid_selection = False
