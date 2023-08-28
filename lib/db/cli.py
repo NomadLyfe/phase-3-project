@@ -86,19 +86,18 @@ while not valid_selection:
                 input('\nAn empty input is not a valid input! Click "Enter" to continue...')
                 print('')
             elif 'O' in move:
+                side = None
                 if move == 'O-O':
-                    kings_move = KingAction(7, 1, turn_count, white_text)
-                    out1 = kings_move.castle()
-                    rooks_move = RookAction(7, 2, turn_count, white_text)
-                    out2 = rooks_move.castle()
-                    if out1 and out2:
+                    side = 'ks'
+                    castle_move = KingAction(7, 1, turn_count, white_text)
+                    castle = castle_move.castle(side, board_state)
+                    if castle:
                         possible = True
                 elif move == 'O-O-O':
-                    kings_move = KingAction(7, 5, turn_count, white_text)
-                    out1 = kings_move.castle()
-                    rooks_move = RookAction(7, 4, turn_count, white_text)
-                    out2 = rooks_move.castle()
-                    if out1 and out2:
+                    side = 'qs'
+                    castle_move = KingAction(7, 5, turn_count, white_text)
+                    castle = castle_move.castle(side, board_state)
+                    if castle:
                         possible = True
                 else:
                     input('\nYour input is not valid! Click "Enter" to continue...')
@@ -154,7 +153,7 @@ while not valid_selection:
                     if captured_piece:
                         is_move_possible = True
                     if is_move_possible:
-                        print(f'\nBlack responds with {random_piece}  to {random_letter}{random_number}{f", capturing your {captured_piece}." if random_capture else "."}\n')
+                        print(f'\nBlack responds with {random_piece}  to {random_letter}{random_number}{f", capturing your {captured_piece} ." if random_capture else "."}\n')
                     #print(f' Attempting: Capture is {random_capture}. {random_piece}  going to ({random_letter}, {random_number}).')
         if is_win:
             print('\n\nCongratulations, you won!!!')

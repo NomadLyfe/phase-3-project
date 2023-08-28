@@ -229,3 +229,20 @@ class KingAction(ChessPieceAction):
                                 self.turn_count += 1
                             return True
         return False
+    
+    def castle(self, side, board_state):
+        valid = False
+        y = 0 if self.color == black_text else 7
+        if board_state[y][4] == self.color.format(KING):
+            if side == 'ks' and board_state[y][5] in EMPTY_SPACES and board_state[y][6] in EMPTY_SPACES and board_state[y][7] == self.color.format(ROOK):
+                valid = True
+            elif side == 'qs' and board_state[y][3] in EMPTY_SPACES and board_state[y][2] in EMPTY_SPACES and board_state[y][1] in EMPTY_SPACES and board_state[y][0] == self.color.format(ROOK):
+                valid = True        
+        if valid:
+            board_state[y][4] = EMPTY_BOARD[y][4]
+            board_state[y][4 + (2 if side == 'ks' else -2)] = self.color.format(KING)
+            board_state[y][7 if side == 'ks' else 0] = EMPTY_BOARD[y][7 if side == 'ks' else 0]
+            board_state[y][4 + (1 if side == 'ks' else -1)] = self.color.format(ROOK)
+            return True
+        else:
+            return False
