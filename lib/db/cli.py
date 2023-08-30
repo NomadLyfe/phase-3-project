@@ -80,6 +80,7 @@ while not valid_selection:
                             "Tell me your move using standard chess notation:  ")
                 h = False
             possible = None
+            is_check = False
             if move == 'h':
                 h = True
             elif not move:
@@ -103,7 +104,29 @@ while not valid_selection:
                     input('\nYour input is not valid! Click "Enter" to continue...')
                     print('')
             elif '+' in move:
-                pass
+                is_check = True
+                piece_key = 'P'
+                (row, column) = (move[0], move[1])
+                if move[0] in string.ascii_uppercase:
+                    piece_key = move[0]
+                    (row, column) = (move[1], move[2])  
+                if 'x' in move:
+                    is_capture = True
+                    (row, column) = (move[2], move[3])
+                piece_to_action = {
+                    'N': KnightAction,
+                    'R': RookAction,
+                    'B': BishopAction,
+                    'K': KingAction,
+                    'Q': QueenAction,
+                    'P': PawnAction
+                }
+                moving_piece = piece_to_action[piece_key](row, column, turn_count, white_text)
+                possible = moving_piece.move(board_state, is_capture, is_check)
+                turn_count = moving_piece.turn_count
+                if not possible:
+                    input('\nThat is an illegal move! Click "Enter" to continue...')
+                    print('')
             elif '#' in move:
                 is_win = True
                 active_game = False
