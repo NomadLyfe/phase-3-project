@@ -186,11 +186,17 @@ class ChessPieceAction():
             else:
                 return False
         return False
+    
+    def is_king_in_check(self):
+        pass
+
+    def is_king_in_mate(self):
+        pass
 
 
 class PawnAction(ChessPieceAction):
 
-    def move(self, board_state, is_capture, is_check = False):
+    def move(self, board_state, is_capture, is_check = False, is_mate = False):
         for i, row in enumerate(board_state):
             for j, piece in enumerate(row):
                 if piece == self.color.format(PAWN):
@@ -241,7 +247,7 @@ class PawnAction(ChessPieceAction):
 
 class KnightAction(ChessPieceAction):
 
-    def move(self, board_state, is_capture, is_check = False):
+    def move(self, board_state, is_capture, is_check = False, is_mate = False):
         for i, row in enumerate(board_state):
             for j, piece in enumerate(row):
                 if piece == self.color.format(KNIGHT):
@@ -282,7 +288,7 @@ class KnightAction(ChessPieceAction):
 
 class RookAction(ChessPieceAction):
 
-    def move(self, board_state, is_capture, is_check = False):
+    def move(self, board_state, is_capture, is_check = False, is_mate = False):
         for i, row in enumerate(board_state):
             for j, piece in enumerate(row):
                 if piece == self.color.format(ROOK):
@@ -329,7 +335,7 @@ class RookAction(ChessPieceAction):
 
 class BishopAction(ChessPieceAction):
 
-    def move(self, board_state, is_capture, is_check = False):
+    def move(self, board_state, is_capture, is_check = False, is_mate = False):
         for i, row in enumerate(board_state):
             for j, piece in enumerate(row):
                 if piece == self.color.format(BISHOP):
@@ -375,7 +381,7 @@ class BishopAction(ChessPieceAction):
 
 class QueenAction(ChessPieceAction):
 
-    def move(self, board_state, is_capture, is_check = False):
+    def move(self, board_state, is_capture, is_check = False, is_mate = False):
         for i, row in enumerate(board_state):
             for j, piece in enumerate(row):
                 if piece == self.color.format(QUEEN):

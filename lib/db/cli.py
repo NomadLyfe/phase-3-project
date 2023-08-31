@@ -18,6 +18,8 @@ while not valid_login:
             valid_login = False
         else:
             curr_user = User(username = input_username, password = input_password)
+            session.add(curr_user)
+            session.commit()
             valid_login = True
     else:
         input_password = input("\n\nPlease enter your password:  ")
@@ -66,7 +68,7 @@ while not valid_selection:
             print('\n')
             move = False
             if not h:
-                move = input("Enter your move using standard chess notation (Enter 'h' for help):  ")
+                move = input("Enter your move using standard chess notation (Enter 'h' for help or enter 'e' for exit):  ")
             else:
                 move = input("King: 'K', Queen: 'Q', Bishop: 'B', Rook: 'R', Knight: 'N', Pawn: ''.\n" \
                             "After the piece, write the space identifier with letter followed by number.\n" \
@@ -81,8 +83,13 @@ while not valid_selection:
                 h = False
             possible = None
             is_check = False
+            black_in_check = False
+            white_in_check = False
+            moving_piece = None
             if move == 'h':
                 h = True
+            elif move == 'e': 
+                active_game = False
             elif not move:
                 input('\nAn empty input is not a valid input! Click "Enter" to continue...')
                 print('')
@@ -124,11 +131,32 @@ while not valid_selection:
                 moving_piece = piece_to_action[piece_key](row, column, turn_count, white_text)
                 possible = moving_piece.move(board_state, is_capture, is_check)
                 turn_count = moving_piece.turn_count
+                black_in_check = True
                 if not possible:
                     input('\nThat is an illegal move! Click "Enter" to continue...')
                     print('')
             elif '#' in move:
-                is_win = True
+                is_mate = True
+                is_check = True
+                piece_key = 'P'
+                (row, column) = (move[0], move[1])
+                if move[0] in string.ascii_uppercase:
+                    piece_key = move[0]
+                    (row, column) = (move[1], move[2])  
+                if 'x' in move:
+                    is_capture = True
+                    (row, column) = (move[2], move[3])
+                piece_to_action = {
+                    'N': KnightAction,
+                    'R': RookAction,
+                    'B': BishopAction,
+                    'K': KingAction,
+                    'Q': QueenAction,
+                    'P': PawnAction
+                }
+                moving_piece = piece_to_action[piece_key](row, column, turn_count, white_text)
+                is_win = moving_piece.move(board_state, is_capture, is_check, is_mate)
+                turn_count = moving_piece.turn_count
                 active_game = False
             else:
                 is_capture = False
@@ -171,6 +199,10 @@ while not valid_selection:
                         B_QUEEN: QueenAction,
                         B_PAWN: PawnAction
                     }
+                    if black_in_check:
+                        random_capture = True
+                        random_letter = moving_piece.letter
+                        random_number = moving_piece.number
                     moving_piece = piece_to_action[random_piece](random_letter, random_number, turn_count, black_text)
                     captured_piece = moving_piece.move(board_state, random_capture)
                     if captured_piece:
@@ -179,14 +211,57 @@ while not valid_selection:
                         print(f'\nBlack responds with {random_piece}  to {random_letter}{random_number}{f", capturing your {captured_piece} ." if random_capture else "."}\n')
                     #print(f' Attempting: Capture is {random_capture}. {random_piece}  going to ({random_letter}, {random_number}).')
         if is_win:
+            print(f'Turn: {turn_count}\n\n    _________________________')
+            for i in range(8):
+                for j in range(11):
+                    if j == 0:
+                        print(NUMBERS[i] ,end='  ')
+                    elif j == 1:
+                        print('|', end=' ')
+                    elif j == 10:
+                        print('|')
+                    else:
+                        print(board_state[i][j-2], end='  ')
+            print('    ', end='')
+            for i in range (25):
+                print('\u203E', end='')
+            print('')
+            print('     ', end='')
+            for i in range(8):
+                print(LETTERS[i], end='  ')
+            print('\n')
             print('\n\nCongratulations, you won!!!')
             print('\nThis game, your number of moves to win, and username will be saved on the Hi Score Chart!')
+            new_game.turn_count = turn_count
+            new_game.active_game = False
             new_hi_score = HiScoreChart(user= curr_user, game= new_game, turn_count=new_game.turn_count)
+            session.add(new_hi_score)
+            session.add(new_game)
+            session.commit()
             input('\nPress "Enter" to return to the main menu...')
             valid_selection = False
         else:
-            print('The computer won. Try again next time!')
-            input('Press "Enter" to return to the main menu...')
+            print(f'Turn: {turn_count}\n\n    _________________________')
+            for i in range(8):
+                for j in range(11):
+                    if j == 0:
+                        print(NUMBERS[i] ,end='  ')
+                    elif j == 1:
+                        print('|', end=' ')
+                    elif j == 10:
+                        print('|')
+                    else:
+                        print(board_state[i][j-2], end='  ')
+            print('    ', end='')
+            for i in range (25):
+                print('\u203E', end='')
+            print('')
+            print('     ', end='')
+            for i in range(8):
+                print(LETTERS[i], end='  ')
+            print('\n')
+            print('\n\nThe computer won. Try again next time!')
+            input('\nPress "Enter" to return to the main menu...')
             valid_selection = False
     elif selection == '2' or selection == 'Hi-Score Chart':
         more_pages = True
