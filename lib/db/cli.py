@@ -32,7 +32,7 @@ while not valid_login:
             print(' ')
             valid_login = False
     valid_selection = False
-    while not valid_selection:
+    while not valid_selection and valid_login:
         valid_selection = True
         print("\n\n        Welcome to the CLI Chess Minigame Main Menu        \n" \
                 "          ___________           _________________          \n" \

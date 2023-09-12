@@ -264,7 +264,6 @@ class KnightAction(ChessPieceAction):
                                 if is_check != check_for_check and not is_check:
                                     print('\n\nThat move will place the enemy in check, please use "+" after the move if this is your intention.')
                                 else:
-                                    print(check_for_check)
                                     if check_for_check and is_check:
                                         print('\n\nYou put Black in check!')
                                     captured_piece = board_state[NUMBERS.index(self.number)][LETTERS.index(self.letter)]
@@ -296,7 +295,6 @@ class RookAction(ChessPieceAction):
                     y_diff = NUMBERS.index(self.number) - i
                     if (x_diff == 0) ^ (y_diff == 0):
                         check_for_check = self.lookforcheck(board_state, ROOK, (j,i))
-                        print(check_for_check)
                         r = x_diff if x_diff != 0 else y_diff
                         for k in range(1, abs(r)):
                             dirr = int(x_diff/abs(x_diff)) if x_diff != 0 else int(y_diff/abs(y_diff))
@@ -400,7 +398,6 @@ class QueenAction(ChessPieceAction):
                                 x_dirr = int(x_diff/abs(x_diff))
                                 y_dirr = int(y_diff/abs(y_diff))
                                 if not (board_state[NUMBERS.index(self.number)-(k*y_dirr)][LETTERS.index(self.letter)-(k*x_dirr)] in EMPTY_SPACES):
-                                    print(x_diff, y_diff)
                                     return False
                         if (board_state[NUMBERS.index(self.number)][LETTERS.index(self.letter)] in list(BLACK_PIECES.values())) and self.color == black_text:
                             pass
