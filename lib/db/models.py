@@ -1,4 +1,4 @@
-from sqlalchemy import Integer, create_engine, Column, Text, ForeignKey, MetaData
+from sqlalchemy import Integer, create_engine, Column, Text, ForeignKey
 from sqlalchemy.orm import sessionmaker, relationship
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.ext.associationproxy import association_proxy

@@ -1,5 +1,4 @@
 from random import choice as rc
-import random
 from models import session, Game, User, HiScoreChart
 from faker import Faker
 

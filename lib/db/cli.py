@@ -1,6 +1,6 @@
 import string
 from random import choice as rc
-from constants import B_ROOK,B_KNIGHT,B_BISHOP,B_QUEEN,B_KING,B_BISHOP,B_KNIGHT,B_ROOK,B_PAWN,KNIGHT,ROOK,BISHOP,QUEEN,KING,PAWN,black_text,white_text,WHITE_PIECES,BLACK_PIECES,LETTERS,NUMBERS
+from constants import B_ROOK,B_KNIGHT,B_BISHOP,B_QUEEN,B_KING,B_BISHOP,B_KNIGHT,B_ROOK,B_PAWN,black_text,white_text,BLACK_PIECES,LETTERS,NUMBERS
 from chess_classes import PawnAction,KnightAction,RookAction,BishopAction,QueenAction,KingAction
 from models import Game, User, HiScoreChart, session
 
