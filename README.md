@@ -1,14 +1,20 @@
-# CLI Chess Minigame
+# Chess Minigame
 
-CLI Chess Minigame is a simple CLI that allows users to login, view the hi-score chart of everyone that beat the computer, and play chess games against the computer.
+Chess Arena is a fullstack web app that allows users to login, play chess games against the computer, and view their own profile.
 
 ## Installation
 
-Fork this repo, copy the SSH link, and type "git clone 'SSH link'" into your terminal in your desired directory.
+Fork this repo, then copy the SSH link for your forked repo, and type "git clone 'SSH link'" into your terminal in your desired directory. Once on your local machine, open the terminal and type "pipenv install -r requirements.txt" to create the virtual environment with the necessary packages (make sure you have pipenv installed (pip install pipenv --user) before running the pipenv command). Then open the instance of the environment using "pipenv shell". Then cd into the frontend folder "cd frontend/" and type the following command "npm install". Then open a second terminal and cd into the backend folder "cd ../backend". At this point you should have a terminal in the frontend and the other in the backend folders. Run the folloing in the backend terminal:
+
+ - "python manage.py makemigrations"
+ - "python manage.py migrate"
+ - "python manage.py runserver"
+
+ Then in the terminal, copy the http address and paste it into the .env file in the frontend folder in this format "VITE_API_URL="http://000.0.0.0:0000/"". Finally type the following command in the frontend terminal "npm run dev" and open the url in a browser.
 
 ## Usage
 
-The CLI Chess Minigame allows a user to create an account and easily go through the hi-scores of every player that beat the computer in a chess game. The hi-score chart is organized from least number of moves at the top and most and the bottom. Once logged in, a user can start a new chess game against the computer. Moves are communicated tot eh program using standard chess notation and if you enter 'h', the user can get a help section that explains how to properly use chess notation.
+The Chess Arena allows a user to create an account and play against an AI bot. Once logged in, a user can start a new chess game against the AI.
 
 ## Sample GIF of Application
 
@@ -23,8 +29,6 @@ Pull requests are welcome. For major changes, please open an issue first to disc
 I plan on eventually adding the capability for the computer to change difficulty. 
 
 Also I am planning on adding the capability for the user to be a color other than white.
-
-Additionally, I plan on adding the ability for a user to select a game from the hi-score chart (using the game id) to look at the final board state of that game.
 
 ## License
 
