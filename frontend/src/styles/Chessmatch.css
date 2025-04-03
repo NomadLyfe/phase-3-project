@@ -1,67 +1,73 @@
 .chess-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 20px;
-  font-family: Arial, sans-serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+    font-family: Arial, sans-serif;
 }
 
 .chess-board {
-  display: grid;
-  grid-template-columns: repeat(8, 60px);
-  grid-template-rows: repeat(8, 60px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
-  border-radius: 6px;
-  margin-bottom: 20px;
+    display: grid;
+    grid-template-columns: repeat(8, 60px);
+    grid-template-rows: repeat(8, 60px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+    border-radius: 6px;
+    margin-bottom: 20px;
 }
 
 .board-row {
-  display: contents;
+    display: contents;
 }
 
 .board-cell {
-  width: 60px;
-  height: 60px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 36px;
+    width: 60px;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 36px;
 }
 
 .light-square {
-  background-color: #e2e2e2;
+    background-color: #e2e2e2;
 }
 
 .dark-square {
-  background-color: #444444;
+    background-color: #444444;
 }
 
 .chess-piece {
-  pointer-events: none;
+    pointer-events: none;
 }
 
 .forfeit-button {
-  background-color: red;
-  color: white;
-  font-size: 16px;
-  padding: 10px 25px;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-  margin-top: 10px;
+    background-color: red;
+    color: white;
+    font-size: 16px;
+    padding: 10px 25px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    margin-top: 10px;
 }
 
 .forfeit-button:hover {
-  background-color: darkred;
+    background-color: darkred;
 }
 
 .chess-board {
-  transform: rotate(0deg);
+    transform: rotate(0deg);
 }
 
 .chess-board.flipped {
-  transform: rotate(180deg);
+    transform: rotate(180deg);
 }
+
 .chess-board.flipped .board-row {
-  flex-direction: row-reverse;
+    flex-direction: row-reverse;
+}
+
+.highlight-square {
+    outline: 3px solid yellow;
+    box-shadow: inset 0 0 8px yellow;
 }

@@ -1,0 +1,33 @@
+.profile-wrapper {
+    display: flex;
+    height: 100vh;
+}
+
+.profile-container {
+    width: 35vw;
+    max-width: 400px;
+    margin: auto;
+    padding: 30px;
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+    text-align: center;
+}
+
+.profile-pic {
+    width: 100px;
+    height: 100px;
+    object-fit: cover;
+    border-radius: 50%;
+    margin-bottom: 20px;
+}
+
+.profile-container h2 {
+    font-size: 24px;
+    margin-bottom: 10px;
+}
+
+.profile-container p {
+    font-size: 18px;
+    margin: 5px 0;
+}

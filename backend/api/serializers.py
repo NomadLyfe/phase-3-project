@@ -1,6 +1,6 @@
 from django.contrib.auth.models import User
 from rest_framework import serializers
-from .models import Note, ChessMatch
+from .models import Note, ChessMatch, Profile
 
 # from .models import Note
 
@@ -29,3 +29,11 @@ class ChessMatchSerializer(serializers.ModelSerializer):
         fields = ["id", "player_white", "player_black", "board", "created_at"]
         read_only_fields = ["created_at", "player_white"]
         extra_kwargs = {"player_black": {"allow_null": True, "required": False}}
+
+
+class ProfileSerializer(serializers.ModelSerializer):
+    username = serializers.CharField(source="user.username")
+
+    class Meta:
+        model = Profile
+        fields = ["username", "avatar", "wins", "losses"]

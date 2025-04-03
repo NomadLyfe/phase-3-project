@@ -1,7 +1,15 @@
 import Form from "../components/Form";
+import Sidebar from "../components/Sidebar";
 
 function Register() {
-    return <Form route="api/user/register/" method="register" />;
+    return (
+        <>
+            <Sidebar isAuthorized={false} />
+            <div className="register-wrapper">
+                <Form route="api/user/register/" method="register" />
+            </div>
+        </>
+    );
 }
 
 export default Register;

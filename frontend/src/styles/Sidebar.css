@@ -1,0 +1,46 @@
+.sidebar-toggle {
+    position: fixed;
+    top: 20px;
+    left: 10px;
+    background: none;
+    border: none;
+    z-index: 1001;
+    cursor: pointer;
+}
+
+.sidebar {
+    position: fixed;
+    top: 0;
+    left: -235px;
+    width: 250px;
+    height: 100vh;
+    background-color: #222;
+    color: white;
+    transition: left 0.3s ease;
+    padding: 60px 20px 20px;
+    z-index: 1000;
+}
+
+.sidebar.open {
+    left: 0;
+}
+
+.sidebar nav ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.sidebar nav ul li {
+    margin-bottom: 20px;
+}
+
+.sidebar nav ul li a {
+    color: white;
+    text-decoration: none;
+    font-size: 18px;
+}
+
+.sidebar nav ul li a:hover {
+    text-decoration: underline;
+}

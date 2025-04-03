@@ -2,14 +2,13 @@ import { Navigate } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
 import api from "../api";
 import { REFRESH_TOKEN, ACCESS_TOKEN } from "../constants";
-import { useState, useEffect } from "react";
+import { useState, useEffect, cloneElement } from "react";
 
 function ProtectedRoute({ children }) {
-    const [isAthorized, setIsAuthorized] = useState(null);
+    const [isAuthorized, setIsAuthorized] = useState(null);
 
     useEffect(() => {
         auth().catch(() => setIsAuthorized(false));
-    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     const refreshToken = async () => {
@@ -40,17 +39,22 @@ function ProtectedRoute({ children }) {
         const tokenExpiration = decoded.exp;
         const now = Date.now() / 1000;
         if (tokenExpiration < now) {
-            await refreshToken;
+            console.log("am i here?");
+            await refreshToken();
         } else {
             setIsAuthorized(true);
         }
     };
 
-    if (isAthorized === null) {
+    if (isAuthorized === null) {
         return <div>Loading...</div>;
     }
 
-    return isAthorized ? children : <Navigate to="/login"></Navigate>;
+    return isAuthorized ? (
+        cloneElement(children, { isAuthorized })
+    ) : (
+        <Navigate to="/login" />
+    );
 }
 
 export default ProtectedRoute;
