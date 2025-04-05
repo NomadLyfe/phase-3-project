@@ -1,134 +1,79 @@
+from copy import deepcopy
+from math import inf as infinity
+from .chess_objects import ChessGame
+
+
+class Player:
+    def __init__(self, color):
+        self.color = color
+
+
 def alphabeta(
-    player, game, time_left, depth, alpha=float("-inf"), beta=float("inf"), my_turn=True
+    player, game, depth, alpha=-infinity, beta=infinity, maximizing=True, time_left=None
 ):
-    def max_value(state, curr_depth, alpha, beta):
-        new_game_state, is_over, winner = state
-        elapsed_time = player.time_start - time_left()
-        if player.max_time and elapsed_time >= player.max_time:
-            score = player.utility(new_game_state, my_turn)
-            player.completed = False
-            return score, None
-        if is_over or curr_depth >= depth:
-            score = player.utility(new_game_state, my_turn)
-            return score, None
-        v, move = float("-inf"), None
-        killer_moves = player.killer_moves.get(curr_depth, [])
-        # moves = sorted(
-        #     new_game_state.get_player_moves(player),
-        #     key=lambda m: (m in killer_moves, player.utility(new_game_state.forecast_move(m)[0], my_turn)),
-        #     reverse=True,
-        # )
-        moves = sorted(
-            new_game_state.get_player_moves(player),
-            key=lambda m: (
-                m in killer_moves,
-                -len(new_game_state.forecast_move(m)[0].get_opponent_moves(player)),
-                len(new_game_state.forecast_move(m)[0].get_player_moves(player)),
-            ),
-            reverse=True,
-        )
-        for a in moves:
-            v2, a2 = min_value(
-                new_game_state.forecast_move(a), curr_depth + 1, alpha, beta
-            )
-            if v2 > v:
-                v, move = v2, a
-                alpha = max(alpha, v)
-            if v >= beta:
-                player.store_killer_move(curr_depth, a)
-                return v, move
-        return v, move
+    if depth == 0 or game.is_checkmate(player.color):
+        return None, CustomEvalFn(game, player.color)
 
-    def min_value(state, curr_depth, alpha, beta):
-        new_game_state, is_over, winner = state
-        elapsed_time = player.time_start - time_left()
-        if player.max_time and elapsed_time >= player.max_time:
-            score = player.utility(new_game_state, my_turn)
-            player.completed = False
-            return score, None
-        if is_over or curr_depth >= depth:
-            score = player.utility(new_game_state, my_turn)
-            return score, None
-        v, move = float("inf"), None
-        killer_moves = player.killer_moves.get(curr_depth, [])
-        # moves = sorted(
-        #     new_game_state.get_opponent_moves(player),
-        #     key=lambda m: (m in killer_moves, player.utility(new_game_state.forecast_move(m)[0], my_turn)),
-        # )
-        moves = sorted(
-            new_game_state.get_opponent_moves(player),
-            key=lambda m: (
-                m in killer_moves,
-                -len(new_game_state.forecast_move(m)[0].get_opponent_moves(player)),
-                len(new_game_state.forecast_move(m)[0].get_player_moves(player)),
-            ),
-        )
-        for a in moves:
-            v2, a2 = max_value(
-                new_game_state.forecast_move(a), curr_depth + 1, alpha, beta
-            )
-            if v2 < v:
-                v, move = v2, a
-                beta = min(beta, v)
-            if v <= alpha:
-                player.store_killer_move(curr_depth, a)
-                return v, move
-        return v, move
+    def max_value(game, depth, alpha, beta):
+        best_move = None
+        best_value = -infinity
+        for piece, moves in game.all_moves(player.color):
+            for m in moves:
+                new_game = deepcopy(game)
+                for i, row in enumerate(new_game.board):
+                    for j, cell_piece in enumerate(row):  # fixed overwrite
+                        if cell_piece:
+                            cell_piece.pos = (i, j)
+                new_game.move_piece(piece.pos, m)
+                moved_piece = new_game.get_piece(m)
+                if moved_piece:
+                    moved_piece.pos = m
+                _, v = alphabeta(player, new_game, depth - 1, alpha, beta, False)
+                if v > best_value:
+                    best_value = v
+                    best_move = (piece.pos, m)
+                alpha = max(alpha, best_value)
+                if beta <= alpha:
+                    break
+        return best_move, best_value
 
-    is_over = not game.get_active_moves()
-    winner = None
+    def min_value(game, depth, alpha, beta):
+        best_move = None
+        best_value = infinity
+        opponent_color = "black" if player.color == "white" else "white"
+        for piece, moves in game.all_moves(opponent_color):
+            for m in moves:
+                new_game = deepcopy(game)
+                for i, row in enumerate(new_game.board):
+                    for j, cell_piece in enumerate(row):  # fixed overwrite
+                        if cell_piece:
+                            cell_piece.pos = (i, j)
+                new_game.move_piece(piece.pos, m)
+                moved_piece = new_game.get_piece(m)
+                if moved_piece:
+                    moved_piece.pos = m
+                _, v = alphabeta(player, new_game, depth - 1, alpha, beta, True)
+                if v < best_value:
+                    best_value = v
+                    best_move = (piece.pos, m)
+                beta = min(beta, best_value)
+                if beta <= alpha:
+                    break
+        return best_move, best_value
 
-    if my_turn:
-        value, move = max_value((game, is_over, winner), 0, alpha, beta)
-    else:
-        value, move = min_value((game, is_over, winner), 0, alpha, beta)
-    return move, value
+    return (
+        max_value(game, depth, alpha, beta)
+        if maximizing
+        else min_value(game, depth, alpha, beta)
+    )
 
 
-class CustomEvalFn:
-    def __init__(self):
-        # You can load piece-square tables here if needed
-        pass
-
-    def _piece_color(self, piece):
-        return "white" if piece.isupper() else "black"
-
-    def score(self, game, my_player=None):
-        board = game.board  # 2D array
-        score = 0
-
-        for row in board:
-            for piece in row:
-                if piece:
-                    score += self.piece_value(piece)
-
-        # Bonus for number of legal moves
-        my_moves = game.get_player_moves(my_player)
-        opp_moves = game.get_opponent_moves(my_player)
-        capture_bonus = 0
-        for move in my_moves:
-            _, to = move
-            tx, ty = to
-            target = game.board[tx][ty]
-            if target and self._piece_color(target) != my_player.color:
-                capture_bonus += abs(self.piece_value(target)) * 1.5  # weighted
-
-        mobility_bonus = len(my_moves) - 1.2 * len(opp_moves)
-        return score + mobility_bonus + capture_bonus
-
-    def piece_value(self, piece):
-        values = {
-            "P": 1,
-            "p": -1,
-            "N": 3,
-            "n": -3,
-            "B": 3,
-            "b": -3,
-            "R": 5,
-            "r": -5,
-            "Q": 9,
-            "q": -9,
-            "K": 0,
-            "k": 0,
-        }
-        return values.get(piece, 0)
+def CustomEvalFn(game, color):
+    values = {"P": 1, "N": 3, "B": 3, "R": 5, "Q": 9, "K": 1000}
+    total = 0
+    for row in game.board:
+        for piece in row:
+            if piece:
+                val = values.get(piece.symbol.upper(), 0)
+                total += val if piece.color == color else -val
+    return total

@@ -13,6 +13,15 @@
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
     border-radius: 6px;
     margin-bottom: 20px;
+    transform: rotate(0deg);
+}
+
+.chess-board.flipped {
+    transform: rotate(180deg);
+}
+
+.chess-board.flipped .board-row {
+    flex-direction: row-reverse;
 }
 
 .board-row {
@@ -55,19 +64,32 @@
     background-color: darkred;
 }
 
-.chess-board {
-    transform: rotate(0deg);
-}
-
-.chess-board.flipped {
-    transform: rotate(180deg);
-}
-
-.chess-board.flipped .board-row {
-    flex-direction: row-reverse;
-}
-
 .highlight-square {
     outline: 3px solid yellow;
     box-shadow: inset 0 0 8px yellow;
+}
+
+.capture-square {
+    outline: 2px dashed orange;
+}
+
+.check-square {
+    outline: 3px solid red;
+    box-shadow: inset 0 0 10px red;
+}
+
+.bot-move {
+    animation: pulse 1s ease-in-out;
+}
+
+@keyframes pulse {
+    0% {
+        background-color: #88f;
+    }
+    50% {
+        background-color: #44f;
+    }
+    100% {
+        background-color: #88f;
+    }
 }

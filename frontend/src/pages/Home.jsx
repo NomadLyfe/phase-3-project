@@ -10,7 +10,7 @@ function Home({ isAuthorized }) {
 
     const createMatch = async () => {
         try {
-            const res = await api.post("/api/chessmatch/", {
+            const res = await api.post("/api/creatematch/", {
                 vs_computer: true,
                 player_color: color,
             });
