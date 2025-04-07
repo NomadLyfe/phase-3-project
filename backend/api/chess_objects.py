@@ -333,7 +333,7 @@ class ChessGame:
         for i, row in enumerate(self.board):
             for j, piece in enumerate(row):
                 if piece:
-                    piece.pos = (i, j)  # ✅ force update every piece’s .pos
+                    piece.pos = (i, j)
         return [[repr(p) if p else None for p in row] for row in self.board]
 
     @classmethod

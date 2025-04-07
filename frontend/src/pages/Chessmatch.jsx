@@ -158,12 +158,12 @@ function Chessmatch({ isAuthorized }) {
     const handleForfeit = async () => {
         if (
             !window.confirm(
-                "Are you sure you want to forfeit and delete this match?"
+                "Are you sure you want to forfeit this match? (This will count as a loss.)"
             )
         )
             return;
         try {
-            await api.delete(`/api/chessmatch/${id}/`);
+            await api.patch(`/api/chessmatch/${id}/forfeit/`);
             navigate("/");
         } catch (err) {
             alert("Failed to forfeit match.");

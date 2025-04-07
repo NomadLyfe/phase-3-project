@@ -5,6 +5,7 @@ from django.contrib.auth.models import User
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.response import Response
+from rest_framework.status import HTTP_200_OK, HTTP_400_BAD_REQUEST
 from rest_framework import generics
 from .models import ChessMatch
 from .serializers import (
@@ -16,29 +17,18 @@ from .chess_objects import ChessGame
 from .bot import get_best_move
 
 
-class CreateUserView(generics.CreateAPIView):
+class UserCreateView(generics.CreateAPIView):
     queryset = User.objects.all()
     serializer_class = UserSerializer
     permission_classes = [AllowAny]
 
 
-class ProfileView(generics.RetrieveAPIView):
+class ProfileCreateView(generics.RetrieveAPIView):
     serializer_class = ProfileSerializer
     permission_classes = [IsAuthenticated]
 
     def get_object(self):
         return self.request.user.profile
-
-
-class ActiveMatchList(generics.ListAPIView):
-    serializer_class = ChessMatchSerializer
-    permission_classes = [IsAuthenticated]
-
-    def get_queryset(self):
-        return ChessMatch.objects.filter(is_active=True).filter(
-            models.Q(player_white=self.request.user)
-            | models.Q(player_black=self.request.user)
-        )
 
 
 @api_view(["POST"])
@@ -200,13 +190,43 @@ class ChessMatchListView(generics.ListAPIView):
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
+        print(self.request)
         return ChessMatch.objects.filter(
             models.Q(player_white=self.request.user)
             | models.Q(player_black=self.request.user)
         )
 
 
-class ChessMatchDetailView(generics.RetrieveAPIView):
+class ChessMatchDetailView(generics.RetrieveDestroyAPIView):
     queryset = ChessMatch.objects.all()
     serializer_class = ChessMatchSerializer
     permission_classes = [IsAuthenticated]
+
+
+@api_view(["PATCH"])
+@permission_classes([IsAuthenticated])
+def forfeit_match(request, match_id):
+    match = get_object_or_404(ChessMatch, id=match_id)
+
+    if match.game_over:
+        return Response({"error": "Game already over."}, status=HTTP_400_BAD_REQUEST)
+
+    user = request.user
+
+    if match.player_white == user:
+        winner_color = "black"
+        winner_user = match.player_black
+    elif match.player_black == user:
+        winner_color = "white"
+        winner_user = match.player_white
+    else:
+        return Response(
+            {"error": "You are not part of this match."}, status=HTTP_400_BAD_REQUEST
+        )
+
+    match.game_over = True
+    match.winner_color = winner_color
+    match.winner_user = winner_user  # could be None if vs AI
+
+    match.save()
+    return Response({"message": "Match forfeited successfully."}, status=HTTP_200_OK)
