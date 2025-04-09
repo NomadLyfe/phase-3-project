@@ -3,20 +3,13 @@ import { useParams, useNavigate } from "react-router-dom";
 import api from "../api";
 import "../styles/Chessmatch.css";
 import Sidebar from "../components/Sidebar";
+import Chessboard from "../components/Chessboard";
 
-const pieceImages = {
-    P: "♙",
-    R: "♖",
-    N: "♘",
-    B: "♗",
-    Q: "♕",
-    K: "♔",
-    p: "♟",
-    r: "♜",
-    n: "♞",
-    b: "♝",
-    q: "♛",
-    k: "♚",
+const formatElapsedTime = (seconds) => {
+    const hrs = String(Math.floor(seconds / 3600)).padStart(2, "0");
+    const mins = String(Math.floor((seconds % 3600) / 60)).padStart(2, "0");
+    const secs = String(seconds % 60).padStart(2, "0");
+    return `${hrs}:${mins}:${secs}`;
 };
 
 function Chessmatch({ isAuthorized }) {
@@ -29,6 +22,10 @@ function Chessmatch({ isAuthorized }) {
     const [highlightCapture, setHighlightCapture] = useState([]);
     const [inCheck, setInCheck] = useState(false);
     const [checkMateStatus, setCheckMateStatus] = useState("");
+    const [matchObj, setMatchObj] = useState(null);
+    const [elapsedSinceStart, setElapsedSinceStart] = useState(0);
+    const [elapsedSinceMove, setElapsedSinceMove] = useState(0);
+    const [lastMoveTime, setLastMoveTime] = useState(null);
 
     const { id } = useParams();
     const navigate = useNavigate();
@@ -37,10 +34,10 @@ function Chessmatch({ isAuthorized }) {
         const loadMatch = async () => {
             const res = await api.get(`/api/chessmatch/${id}/`);
             const match = res.data;
+            setMatchObj(match);
             setBoard(match.board);
-
             const userId = JSON.parse(
-                atob(localStorage.getItem("access_token").split(".")[1])
+                atob(localStorage.getItem("access").split(".")[1])
             ).user_id;
             const isWhite = match.player_white === userId;
             setPlayerColor(isWhite ? "white" : "black");
@@ -48,14 +45,39 @@ function Chessmatch({ isAuthorized }) {
                 match.player_white === null || match.player_black === null
             );
 
-            if (!isWhite && match.player_white === null) await triggerBotMove();
+            if (!isWhite && match.turn_color === "white")
+                await triggerBotMove();
         };
         loadMatch();
 
-        const unselectOnClickAway = () => setSelected(null);
+        const unselectOnClickAway = () => {
+            setSelected(null);
+            setLegalMoves([]);
+            setHighlightCapture([]);
+        };
         window.addEventListener("click", unselectOnClickAway);
         return () => window.removeEventListener("click", unselectOnClickAway);
     }, [id]);
+
+    useEffect(() => {
+        const timer = setInterval(() => {
+            const now = Date.now();
+
+            if (matchObj?.created_at) {
+                const startTime = new Date(matchObj.created_at).getTime();
+                setElapsedSinceStart(Math.floor((now - startTime) / 1000));
+            }
+
+            if (lastMoveTime !== null) {
+                setElapsedSinceMove(Math.floor((now - lastMoveTime) / 1000));
+            }
+        }, 1000);
+
+        return () => clearInterval(timer);
+    }, [lastMoveTime, matchObj]);
+
+    const toBoardCoords = (x, y) =>
+        playerColor === "white" ? [x, y] : [7 - x, 7 - y];
 
     const triggerBotMove = async () => {
         try {
@@ -104,10 +126,14 @@ function Chessmatch({ isAuthorized }) {
 
         setSelected(null);
         setLegalMoves([]);
+        setHighlightCapture([]);
 
         api.post(`/api/chessmatch/${id}/move/`, { from, to })
             .then((res) => {
                 setInCheck(res.data.in_check);
+                console.log(res.data);
+                setLastMoveTime(new Date(res.data.last_move_at).getTime());
+                setElapsedSinceMove(0);
                 if (res.data.bot_move) {
                     setTimeout(() => {
                         highlightBotMove(
@@ -119,7 +145,11 @@ function Chessmatch({ isAuthorized }) {
                             alert("You win by checkmate!");
                             navigate("/");
                         }
-                    }, 250);
+                        setLastMoveTime(
+                            new Date(res.data.last_move_at).getTime()
+                        );
+                        setElapsedSinceMove(0);
+                    }, 800);
                 } else if (res.data.game_over) {
                     alert("You win by checkmate!");
                     navigate("/");
@@ -135,7 +165,8 @@ function Chessmatch({ isAuthorized }) {
 
     const handleCellClick = (x, y, e) => {
         e.stopPropagation();
-        const piece = board[x][y];
+        const [row, col] = toBoardCoords(x, y);
+        const piece = board[row][col];
         const isPlayerPiece =
             playerColor === "white"
                 ? /[PRNBQK]/.test(piece)
@@ -143,15 +174,19 @@ function Chessmatch({ isAuthorized }) {
 
         if (
             selected &&
-            legalMoves.some((m) => m.to[0] === x && m.to[1] === y)
+            legalMoves.some((m) => m.to[0] === row && m.to[1] === col)
         ) {
-            handleMove(selected, [x, y]);
+            const from = selected;
+            const to = [row, col];
+            handleMove(from, to);
+            setSelected(null);
         } else if (piece && isPlayerPiece) {
-            setSelected([x, y]);
-            fetchLegalMoves([x, y]);
+            setSelected([row, col]);
+            fetchLegalMoves([row, col]);
         } else {
             setSelected(null);
             setLegalMoves([]);
+            setHighlightCapture([]);
         }
     };
 
@@ -176,104 +211,62 @@ function Chessmatch({ isAuthorized }) {
         setTimeout(() => setBotHighlight([]), 1200);
     };
 
+    const durationIfOver =
+        matchObj?.game_over && matchObj.ended_at
+            ? Math.floor(
+                  (new Date(matchObj.ended_at) -
+                      new Date(matchObj.created_at)) /
+                      1000
+              )
+            : null;
+
     return (
         <>
             <Sidebar isAuthorized={isAuthorized} />
             <div className="chess-container">
                 <h2>Chess Match</h2>
-                <div
-                    className={`chess-board ${
-                        playerColor === "black" ? "flipped" : ""
-                    }`}
-                >
-                    {board.map((row, i) => {
-                        const rowIndex = playerColor === "white" ? i : 7 - i;
-                        return (
-                            <div key={i} className="board-row">
-                                {board[rowIndex].map((_, j) => {
-                                    const colIndex =
-                                        playerColor === "white" ? j : 7 - j;
-                                    const cell = board[rowIndex][colIndex];
-                                    const isLight =
-                                        (rowIndex + colIndex) % 2 === 0;
-
-                                    const move = legalMoves.find(
-                                        (m) =>
-                                            m.to[0] === rowIndex &&
-                                            m.to[1] === colIndex
-                                    );
-                                    const isHighlighted = !!move;
-                                    const isCheckMove =
-                                        move?.type === "check" ||
-                                        move?.type === "checkmate";
-                                    const isCapture = highlightCapture.some(
-                                        ([cx, cy]) =>
-                                            cx === rowIndex && cy === colIndex
-                                    );
-                                    const isBotFrom =
-                                        botHighlight.length &&
-                                        botHighlight[0][0] === rowIndex &&
-                                        botHighlight[0][1] === colIndex;
-                                    const isBotTo =
-                                        botHighlight.length === 2 &&
-                                        botHighlight[1][0] === rowIndex &&
-                                        botHighlight[1][1] === colIndex;
-
-                                    return (
-                                        <div
-                                            key={j}
-                                            className={`board-cell ${
-                                                isLight
-                                                    ? "light-square"
-                                                    : "dark-square"
-                                            } ${
-                                                isCheckMove
-                                                    ? "check-square"
-                                                    : isHighlighted
-                                                    ? "highlight-square"
-                                                    : ""
-                                            } ${
-                                                isCapture
-                                                    ? "capture-square"
-                                                    : ""
-                                            } ${
-                                                isBotFrom || isBotTo
-                                                    ? "bot-move"
-                                                    : ""
-                                            }`}
-                                            onClick={(e) =>
-                                                handleCellClick(
-                                                    rowIndex,
-                                                    colIndex,
-                                                    e
-                                                )
-                                            }
-                                        >
-                                            {cell && (
-                                                <span className="chess-piece">
-                                                    {pieceImages[cell]}
-                                                </span>
-                                            )}
-                                        </div>
-                                    );
-                                })}
-                            </div>
-                        );
-                    })}
+                <div className="match-timers">
+                    <div className="timer-block">
+                        <span className="timer-label">Elapsed Time:</span>
+                        <span className="timer-value">
+                            {matchObj?.game_over && durationIfOver !== null
+                                ? formatElapsedTime(durationIfOver)
+                                : formatElapsedTime(elapsedSinceStart)}
+                        </span>
+                    </div>
+                    {matchObj?.game_over ? null : (
+                        <div className="timer-block">
+                            <span className="timer-label">Last move:</span>
+                            <span className="timer-value">
+                                {formatElapsedTime(elapsedSinceMove)}
+                            </span>
+                        </div>
+                    )}
                 </div>
+                <Chessboard
+                    board={board}
+                    playerColor={playerColor}
+                    selected={selected}
+                    legalMoves={legalMoves}
+                    highlightCapture={highlightCapture}
+                    botHighlight={botHighlight}
+                    handleCellClick={handleCellClick}
+                />
                 {inCheck && (
                     <p className="check-warning">
                         {playerColor === "white"
-                            ? "You are in check!"
-                            : "AI is in check!"}
+                            ? "AI is in check!"
+                            : "You are in check!"}
                     </p>
                 )}
                 {checkMateStatus && (
                     <p className="checkmate-message">{checkMateStatus}</p>
                 )}
-                <button className="forfeit-button" onClick={handleForfeit}>
-                    Forfeit
-                </button>
+                {matchObj?.game_over ? null : (
+                    <button className="forfeit-button" onClick={handleForfeit}>
+                        Forfeit
+                    </button>
+                )}
             </div>
         </>
     );

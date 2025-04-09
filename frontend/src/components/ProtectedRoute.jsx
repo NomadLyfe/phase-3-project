@@ -8,7 +8,7 @@ function ProtectedRoute({ children }) {
     const [isAuthorized, setIsAuthorized] = useState(null);
 
     useEffect(() => {
-        auth().catch(() => setIsAuthorized(false));
+        auth();
     }, []);
 
     const refreshToken = async () => {
@@ -23,26 +23,30 @@ function ProtectedRoute({ children }) {
             } else {
                 setIsAuthorized(false);
             }
-        } catch (error) {
-            console.log(error);
+        } catch (err) {
+            console.log("Token refresh failed: ", err);
             setIsAuthorized(false);
         }
     };
 
     const auth = async () => {
-        const token = localStorage.getItem(ACCESS_TOKEN);
-        if (!token) {
+        try {
+            const token = localStorage.getItem(ACCESS_TOKEN);
+            if (!token) {
+                setIsAuthorized(false);
+                return;
+            }
+            const decoded = jwtDecode(token);
+            const tokenExpiration = decoded.exp;
+            const now = Date.now() / 1000;
+            if (tokenExpiration < now) {
+                await refreshToken();
+            } else {
+                setIsAuthorized(true);
+            }
+        } catch (err) {
+            console.log("Auth error: ", err);
             setIsAuthorized(false);
-            return;
-        }
-        const decoded = jwtDecode(token);
-        const tokenExpiration = decoded.exp;
-        const now = Date.now() / 1000;
-        if (tokenExpiration < now) {
-            console.log("am i here?");
-            await refreshToken();
-        } else {
-            setIsAuthorized(true);
         }
     };
 

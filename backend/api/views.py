@@ -2,6 +2,7 @@ from copy import deepcopy
 from django.db import models
 from django.shortcuts import get_object_or_404
 from django.contrib.auth.models import User
+from django.utils import timezone
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.response import Response
@@ -95,13 +96,16 @@ def perform_move(request, match_id):
         match.winner_user = (
             match.player_white if match.winner_color == "white" else match.player_black
         )
+        match.ended_at = timezone.now()
 
+    match.last_move_at = timezone.now()
     match.save()
     response = {
         "board": match.board,
         "move": {"from": from_pos, "to": to_pos},
         "in_check": in_check,
         "game_over": game_over,
+        "last_move_at": match.last_move_at.isoformat(),
     }
 
     if (match.player_white is None or match.player_black is None) and not game_over:
@@ -109,11 +113,7 @@ def perform_move(request, match_id):
         game = ChessGame.deserialize_board(deepcopy(match.board))
         game.turn = bot_color
         bot_move = get_best_move(game, bot_color)
-        print("BOT MOVE:", bot_move)
         if bot_move and isinstance(bot_move, (list, tuple)) and len(bot_move) == 2:
-            print("[AI] Trying move_piece on:", bot_move)
-            print("[AI] Piece at from_pos:", game.get_piece(bot_move[0]))
-            print("[AI] Game turn:", game.turn)
             if game.move_piece(*bot_move):
                 match.board = deepcopy(game.serialize_board())
                 match.turn_color = game.turn
@@ -128,7 +128,7 @@ def perform_move(request, match_id):
                     match.winner_color = bot_color
                     match.winner_user = None
 
-                print(f"[AI] Applying move {bot_move} and saving match {match.id}")
+                match.last_move_at = timezone.now()
                 match.save()
                 response["bot_move"] = {
                     "from": list(bot_move[0]),
@@ -136,6 +136,7 @@ def perform_move(request, match_id):
                 }
                 response["board"] = match.board
                 response["game_over"] = match.game_over
+                response["last_move_at"] = match.last_move_at.isoformat()
 
     return Response(response)
 

@@ -13,15 +13,6 @@
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
     border-radius: 6px;
     margin-bottom: 20px;
-    transform: rotate(0deg);
-}
-
-.chess-board.flipped {
-    transform: rotate(180deg);
-}
-
-.chess-board.flipped .board-row {
-    flex-direction: row-reverse;
 }
 
 .board-row {
@@ -65,31 +56,83 @@
 }
 
 .highlight-square {
-    outline: 3px solid yellow;
-    box-shadow: inset 0 0 8px yellow;
+    outline: 1px solid yellow;
+    outline-offset: -1px;
+    box-shadow: inset 0 0 20px yellow;
 }
 
 .capture-square {
-    outline: 2px dashed orange;
+    outline: 1px solid orange;
+    outline-offset: -1px;
+    box-shadow: inset 0 0 20px orange;
 }
 
 .check-square {
-    outline: 3px solid red;
-    box-shadow: inset 0 0 10px red;
+    outline: 1px solid red;
+    outline-offset: -1px;
+    box-shadow: inset 0 0 20px red;
+}
+
+.selected-square {
+    outline: 1px solid green;
+    outline-offset: -1px;
+    box-shadow: inset 0 0 20px green;
 }
 
 .bot-move {
-    animation: pulse 1s ease-in-out;
+    animation: pulse 0.8s ease-in-out;
 }
 
 @keyframes pulse {
     0% {
-        background-color: #88f;
+        outline: 1px solid #88f;
+        outline-offset: -1px;
+        box-shadow: inset 0 0 20px #88f;
+        /* background-color: #88f; */
     }
     50% {
-        background-color: #44f;
+        outline: 1px solid rgb(55, 55, 255);
+        outline-offset: -1px;
+        box-shadow: inset 0 0 20px rgb(55, 55, 255);
+        /* background-color: #44f; */
     }
     100% {
-        background-color: #88f;
+        outline: 1px solid #88f;
+        outline-offset: -1px;
+        box-shadow: inset 0 0 20px #88f;
+        /* background-color: #88f; */
     }
+}
+
+.match-timers {
+    display: flex;
+    justify-content: center;
+    gap: 40px;
+    margin: 16px 0;
+    font-family: "Courier New", Courier, monospace;
+}
+
+.timer-block {
+    background-color: #1a1a1a;
+    color: #e0e0e0;
+    padding: 10px 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-width: 150px;
+}
+
+.timer-label {
+    font-size: 0.9rem;
+    color: #aaa;
+    margin-bottom: 4px;
+}
+
+.timer-value {
+    font-size: 1.5rem;
+    font-weight: bold;
+    letter-spacing: 0.1em;
+    color: #00ff99;
 }

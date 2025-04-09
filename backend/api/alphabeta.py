@@ -71,9 +71,30 @@ def alphabeta(
 def CustomEvalFn(game, color):
     values = {"P": 1, "N": 3, "B": 3, "R": 5, "Q": 9, "K": 1000}
     total = 0
+    opponent_color = "black" if color == "white" else "white"
+    center_squares = {(3, 3), (3, 4), (4, 3), (4, 4)}
     for row in game.board:
         for piece in row:
             if piece:
                 val = values.get(piece.symbol.upper(), 0)
-                total += val if piece.color == color else -val
+                sign = 1 if piece.color == color else -1
+                total += sign * val
+                if piece.pos in center_squares:
+                    total += sign * 0.5
+                try:
+                    legal_moves = game.get_legal_moves(piece)
+                    total += sign * 0.1 * len(legal_moves)
+                except:
+                    pass
+    if game.in_check(opponent_color):
+        total += 3
+
+    if game.in_check(opponent_color):
+        total -= 3
+
+    if game.is_checkmate(opponent_color):
+        total += 10000
+
+    if game.is_checkmate(color):
+        total -= 10000
     return total
