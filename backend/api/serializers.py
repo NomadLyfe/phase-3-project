@@ -34,6 +34,8 @@ class ChessMatchSerializer(serializers.ModelSerializer):
             "created_at",
             "last_move_at",
             "ended_at",
+            "captured_by_white",
+            "captured_by_black",
         ]
         read_only_fields = ["created_at", "last_move_at", "player_white", "winner_user"]
         extra_kwargs = {"player_black": {"allow_null": True, "required": False}}

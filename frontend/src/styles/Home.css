@@ -1,45 +1,44 @@
 .home-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  height: 100vh;
-  font-family: Arial, sans-serif;
-  background-color: #f0f0f0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    font-family: Arial, sans-serif;
 }
 
 .home-container h1 {
-  font-size: 36px;
-  color: #333;
-  margin-bottom: 40px;
+    font-size: 36px;
+    color: #333;
+    margin-bottom: 40px;
 }
 
 .menu-buttons {
-  display: flex;
-  gap: 20px;
+    display: flex;
+    gap: 20px;
 }
 
 .menu-buttons button {
-  padding: 15px 30px;
-  font-size: 18px;
-  background-color: #007bff;
-  color: white;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
+    padding: 15px 30px;
+    font-size: 18px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
 }
 
 .menu-buttons button:hover {
-  background-color: #0056b3;
+    background-color: #0056b3;
 }
 
 .color-select {
-  margin-bottom: 20px;
-  display: flex;
-  gap: 1rem;
-  justify-content: center;
+    margin-bottom: 20px;
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
 }
 .color-select label {
-  font-size: 18px;
+    font-size: 18px;
 }

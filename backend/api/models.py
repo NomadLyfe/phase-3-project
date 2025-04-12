@@ -46,6 +46,8 @@ class ChessMatch(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     last_move_at = models.DateTimeField(auto_now=True)
     ended_at = models.DateTimeField(null=True, blank=True)
+    captured_by_white = models.JSONField(default=list)
+    captured_by_black = models.JSONField(default=list)
 
     def __str__(self):
         return f"Match #{self.id} - {self.player_white} vs {self.player_black or 'Computer'}"

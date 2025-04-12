@@ -25,6 +25,8 @@ def alphabeta(
                         if cell_piece:
                             cell_piece.pos = (i, j)
                 new_game.move_piece(piece.pos, m)
+                if new_game.in_check(player.color):
+                    continue
                 moved_piece = new_game.get_piece(m)
                 if moved_piece:
                     moved_piece.pos = m
@@ -49,6 +51,8 @@ def alphabeta(
                         if cell_piece:
                             cell_piece.pos = (i, j)
                 new_game.move_piece(piece.pos, m)
+                if new_game.in_check(opponent_color):
+                    continue
                 moved_piece = new_game.get_piece(m)
                 if moved_piece:
                     moved_piece.pos = m

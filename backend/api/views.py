@@ -77,10 +77,20 @@ def perform_move(request, match_id):
 
     game = ChessGame.deserialize_board(deepcopy(match.board))
     game.turn = match.turn_color
+    captured_piece = game.get_piece(tuple(to_pos))
 
     if not game.move_piece(tuple(from_pos), tuple(to_pos)):
         return Response({"error": "Illegal move."}, status=400)
-
+    if captured_piece:
+        captured_symbol = (
+            captured_piece.symbol.upper()
+            if captured_piece.color == "white"
+            else captured_piece.symbol.lower()
+        )
+        if captured_piece.color == "white":
+            match.captured_by_black.append(captured_symbol)
+        else:
+            match.captured_by_white.append(captured_symbol)
     match.board = deepcopy(game.serialize_board())
     match.turn_color = game.turn
     match.turn_count += 1
@@ -106,6 +116,8 @@ def perform_move(request, match_id):
         "in_check": in_check,
         "game_over": game_over,
         "last_move_at": match.last_move_at.isoformat(),
+        "captured_by_white": match.captured_by_white,
+        "captured_by_black": match.captured_by_black,
     }
 
     if (match.player_white is None or match.player_black is None) and not game_over:
@@ -114,7 +126,18 @@ def perform_move(request, match_id):
         game.turn = bot_color
         bot_move = get_best_move(game, bot_color)
         if bot_move and isinstance(bot_move, (list, tuple)) and len(bot_move) == 2:
+            captured_piece = game.get_piece(bot_move[1])
             if game.move_piece(*bot_move):
+                if captured_piece:
+                    captured_symbol = (
+                        captured_piece.symbol.upper()
+                        if captured_piece.color == "white"
+                        else captured_piece.symbol.lower()
+                    )
+                    if captured_piece.color == "white":
+                        match.captured_by_black.append(captured_symbol)
+                    else:
+                        match.captured_by_white.append(captured_symbol)
                 match.board = deepcopy(game.serialize_board())
                 match.turn_color = game.turn
                 match.turn_count += 1
@@ -137,6 +160,9 @@ def perform_move(request, match_id):
                 response["board"] = match.board
                 response["game_over"] = match.game_over
                 response["last_move_at"] = match.last_move_at.isoformat()
+                response["captured_by_white"] = match.captured_by_white
+                response["captured_by_black"] = match.captured_by_black
+                response["in_check_after_bot"] = game.in_check(game.turn)
 
     return Response(response)
 

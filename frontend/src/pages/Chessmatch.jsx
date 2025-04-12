@@ -26,6 +26,9 @@ function Chessmatch({ isAuthorized }) {
     const [elapsedSinceStart, setElapsedSinceStart] = useState(0);
     const [elapsedSinceMove, setElapsedSinceMove] = useState(0);
     const [lastMoveTime, setLastMoveTime] = useState(null);
+    const [historyIndex, setHistoryIndex] = useState(null);
+    const [capturedByWhite, setCapturedByWhite] = useState([]);
+    const [capturedByBlack, setCapturedByBlack] = useState([]);
 
     const { id } = useParams();
     const navigate = useNavigate();
@@ -35,7 +38,16 @@ function Chessmatch({ isAuthorized }) {
             const res = await api.get(`/api/chessmatch/${id}/`);
             const match = res.data;
             setMatchObj(match);
-            setBoard(match.board);
+            setCapturedByWhite(match.captured_by_white || []);
+            setCapturedByBlack(match.captured_by_black || []);
+            if (match.game_over) {
+                setHistoryIndex(match.game_history.length - 1); // last move
+            }
+            setBoard(
+                match.game_over
+                    ? match.game_history[match.game_history.length - 1]
+                    : match.board
+            );
             const userId = JSON.parse(
                 atob(localStorage.getItem("access").split(".")[1])
             ).user_id;
@@ -120,10 +132,23 @@ function Chessmatch({ isAuthorized }) {
 
         // simulate user move visually
         const tempBoard = JSON.parse(JSON.stringify(board));
+        const visualCapturedPiece = tempBoard[toX][toY];
         tempBoard[toX][toY] = tempBoard[fromX][fromY];
         tempBoard[fromX][fromY] = null;
         setBoard(tempBoard);
-
+        if (visualCapturedPiece) {
+            if (playerColor === "white") {
+                setCapturedByWhite([
+                    ...capturedByWhite,
+                    visualCapturedPiece.toLowerCase(),
+                ]);
+            } else {
+                setCapturedByBlack([
+                    ...capturedByBlack,
+                    visualCapturedPiece.toUpperCase(),
+                ]);
+            }
+        }
         setSelected(null);
         setLegalMoves([]);
         setHighlightCapture([]);
@@ -141,6 +166,9 @@ function Chessmatch({ isAuthorized }) {
                             res.data.bot_move.to
                         );
                         setBoard(res.data.board);
+                        setCapturedByWhite(res.data.captured_by_white || []);
+                        setCapturedByBlack(res.data.captured_by_black || []);
+                        setInCheck(res.data.in_check_after_bot);
                         if (res.data.game_over) {
                             alert("You win by checkmate!");
                             navigate("/");
@@ -155,6 +183,8 @@ function Chessmatch({ isAuthorized }) {
                     navigate("/");
                 } else {
                     setBoard(res.data.board);
+                    setCapturedByWhite(res.data.captured_by_white || []);
+                    setCapturedByBlack(res.data.captured_by_black || []);
                 }
             })
             .catch((err) => {
@@ -220,6 +250,11 @@ function Chessmatch({ isAuthorized }) {
               )
             : null;
 
+    const currentBoard =
+        matchObj?.game_over && historyIndex !== null
+            ? matchObj.game_history[historyIndex]
+            : board;
+
     return (
         <>
             <Sidebar isAuthorized={isAuthorized} />
@@ -244,14 +279,57 @@ function Chessmatch({ isAuthorized }) {
                     )}
                 </div>
                 <Chessboard
-                    board={board}
+                    board={currentBoard}
                     playerColor={playerColor}
                     selected={selected}
                     legalMoves={legalMoves}
                     highlightCapture={highlightCapture}
                     botHighlight={botHighlight}
-                    handleCellClick={handleCellClick}
+                    handleCellClick={
+                        matchObj?.game_over ? null : handleCellClick
+                    }
+                    capturedByOpponent={
+                        playerColor == "white"
+                            ? capturedByBlack
+                            : capturedByWhite
+                    }
+                    capturedByPlayer={
+                        playerColor == "white"
+                            ? capturedByWhite
+                            : capturedByBlack
+                    }
                 />
+                {matchObj?.game_over && (
+                    <div className="history-controls">
+                        <button
+                            onClick={() =>
+                                setHistoryIndex((i) => Math.max(0, i - 1))
+                            }
+                            disabled={historyIndex <= 0}
+                        >
+                            ⬅️
+                        </button>
+                        <span className="history-index">
+                            Move {historyIndex + 1} /{" "}
+                            {matchObj.game_history.length}
+                        </span>
+                        <button
+                            onClick={() =>
+                                setHistoryIndex((i) =>
+                                    Math.min(
+                                        matchObj.game_history.length - 1,
+                                        i + 1
+                                    )
+                                )
+                            }
+                            disabled={
+                                historyIndex >= matchObj.game_history.length - 1
+                            }
+                        >
+                            ➡️
+                        </button>
+                    </div>
+                )}
                 {inCheck && (
                     <p className="check-warning">
                         {playerColor === "white"
